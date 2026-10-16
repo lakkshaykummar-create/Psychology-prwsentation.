@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cognitive Psychology: Myths, Facts & Case Studies</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Lora:ital,wght@0,600;0,700;1,500&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: 'DM Sans', sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .serif-title {
+      font-family: 'Lora', serif;
+    }
+    
+    /* Slide Wrapper & Animations */
+    .deck-viewport {
+      width: 1280px;
+      height: 720px;
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+      background: #0f172a;
+    }
+
+    .slide {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(20px) scale(0.98);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0s linear 0.5s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transition-delay: 0s;
+      pointer-events: auto;
+      transform: translateY(0) scale(1);
+      z-index: 10;
+    }
+
+    /* Staggered entry animations inside active slide */
+    .slide.active .anim-item {
+      animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      opacity: 0;
+    }
+    .slide.active .delay-1 { animation-delay: 0.1s; }
+    .slide.active .delay-2 { animation-delay: 0.22s; }
+    .slide.active .delay-3 { animation-delay: 0.34s; }
+    .slide.active .delay-4 { animation-delay: 0.46s; }
+    .slide.active .delay-5 { animation-delay: 0.58s; }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Interactive Reveal Card Animations */
+    .answer-box {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(16px);
+      transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .answer-box.revealed {
+      max-height: 440px;
+      opacity: 1;
+      transform: translateY(0);
+      margin-top: 20px;
+    }
+
+    .pulse-badge {
+      animation: softPulse 2s infinite;
+    }
+    @keyframes softPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.04); }
+    }
+
+    /* Slide 12: 3D Flip / UnLock Cards */
+    .clue-card {
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .clue-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 15px 30px -10px rgba(20, 184, 166, 0.3);
+    }
+    .clue-card .locked-view {
+      transition: all 0.35s ease;
+    }
+    .clue-card .unlocked-view {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      pointer-events: none;
+    }
+    .clue-card.unlocked .locked-view {
+      opacity: 0;
+      transform: scale(0.92);
+      pointer-events: none;
+    }
+    .clue-card.unlocked .unlocked-view {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    /* Slide 13: Patient H.M. Interactive Medical Tabs & Brain Pulse */
+    .hm-tab {
+      transition: all 0.3s ease;
+    }
+    .hm-tab.active-tab {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(20, 184, 166, 0.2));
+      border-color: #f59e0b;
+      transform: translateX(6px);
+    }
+    .brain-glow {
+      animation: brainPulse 3s infinite ease-in-out;
+    }
+    @keyframes brainPulse {
+      0%, 100% { filter: drop-shadow(0 0 10px rgba(245, 158, 11, 0.4)); }
+      50% { filter: drop-shadow(0 0 22px rgba(20, 184, 166, 0.7)); }
+    }
+
+    /* Slide 14: Interactive Balance Scale & Verdict */
+    .eval-item {
+      opacity: 0.25;
+      filter: blur(3px);
+      transform: translateX(-10px);
+      transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .eval-item.revealed-item {
+      opacity: 1;
+      filter: blur(0);
+      transform: translateX(0);
+    }
+    .verdict-banner {
+      opacity: 0.3;
+      transform: scale(0.97);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .verdict-banner.unlocked-verdict {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* Slide 3: Interactive Career & Education Pathway */
+    .edu-step {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .edu-step:hover {
+      transform: translateY(-4px);
+    }
+    .edu-step.active-edu {
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(20, 184, 166, 0.2));
+      border-color: #38bdf8;
+      box-shadow: 0 12px 30px -8px rgba(56, 189, 248, 0.35);
+      transform: translateY(-4px);
+    }
+
+    /* Slide 1 (Intro): Interactive Etymology & Neural Decoder */
+    .intro-tab {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .intro-tab:hover {
+      transform: translateY(-3px);
+    }
+    .intro-tab.active-intro {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.28), rgba(56, 189, 248, 0.22));
+      border-color: #c084fc;
+      box-shadow: 0 12px 30px -8px rgba(168, 85, 247, 0.4);
+    }
+    .mental-pill {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .mental-pill.lit-pill {
+      background: rgba(192, 132, 252, 0.25);
+      border-color: #c084fc;
+      color: #ffffff;
+      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(192, 132, 252, 0.4);
+    }
+
+    /* Slide 2 (Neisser 1967): Interactive 5-Stage Information Processing Pipeline */
+    .neisser-node {
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+    }
+    .neisser-node:hover {
+      transform: translateY(-4px);
+    }
+    .neisser-node.active-node {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.28), rgba(20, 184, 166, 0.22));
+      border-color: #fbbf24;
+      box-shadow: 0 12px 28px -6px rgba(251, 191, 36, 0.4);
+      transform: translateY(-5px) scale(1.02);
+    }
+
+    /* Slide 4 (Areas of Work): Dark Theme Interactive 6-Card Matrix */
+    .area-card {
+      transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .area-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px -8px rgba(56, 189, 248, 0.22);
+      border-color: rgba(255, 255, 255, 0.28);
+    }
+    .area-card.active-area {
+      background: linear-gradient(135deg, rgba(88, 28, 135, 0.45), rgba(15, 118, 110, 0.35));
+      transform: translateY(-5px) scale(1.015);
+      box-shadow: 0 18px 35px -8px rgba(168, 85, 247, 0.4);
+      border-color: #c084fc;
+    }
+    .area-card.dimmed-area {
+      opacity: 0.42;
+      transform: scale(0.985);
+    }
+
+    /* Slides 5 & 6 (Career Opportunities Part 1 & Part 2): Interactive Role Dossier Cards */
+    .opp-card {
+      transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .opp-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 14px 28px -8px rgba(56, 189, 248, 0.25);
+    }
+    .opp-card.active-opp {
+      background: linear-gradient(135deg, rgba(30, 58, 138, 0.55), rgba(15, 118, 110, 0.38));
+      border-color: #38bdf8;
+      transform: translateY(-5px) scale(1.015);
+      box-shadow: 0 18px 36px -8px rgba(56, 189, 248, 0.42);
+    }
+    .opp-card.active-opp-2 {
+      background: linear-gradient(135deg, rgba(88, 28, 135, 0.55), rgba(217, 119, 6, 0.32));
+      border-color: #f59e0b;
+      transform: translateY(-5px) scale(1.015);
+      box-shadow: 0 18px 36px -8px rgba(245, 158, 11, 0.4);
+    }
+
+    .neural-bg-spin {
+      animation: slowFloat 16s ease-in-out infinite alternate;
+    }
+    @keyframes slowFloat {
+      0% { transform: translateY(0px) rotate(0deg); }
+      100% { transform: translateY(-10px) rotate(2deg); }
+    }
+
+    /* Whole app (top bar + deck + nav) is scaled by JS to fit the window */
+    #app {
+      width: 1280px;
+      flex: none;
+      transform-origin: center center;
+      transform: scale(var(--fit-scale, 1));
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+
+  <!-- Top Progress & Mode Indicator -->
+  <div class="w-full flex items-center justify-between mb-3 px-2 text-slate-300 text-sm">
+    <div class="flex items-center gap-3">
+      <span id="sectionBadge" class="bg-purple-500/20 text-purple-300 border border-purple-500/40 px-3 py-1 rounded-full font-semibold tracking-wide uppercase text-xs">
+        <i class="fa-solid fa-brain mr-1"></i> Introduction: Meaning of Cognition
+      </span>
+      <span id="slideCounter" class="text-slate-400 font-medium">Slide 1 of 14</span>
+    </div>
+    <div class="text-xs text-slate-400 flex items-center gap-4">
+      <span><kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700">Space</kbd> Reveal / Next Step</span>
+      <span><kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700">←</kbd> <kbd class="px-2 py-0.5 bg-slate-800 rounded border border-slate-700">→</kbd> Navigate Slides</span>
+    </div>
+  </div>
+
+  <!-- Main Presentation Container -->
+  <div class="deck-viewport" id="deck">
+
+    <!-- ==========================================
+         SLIDE 1: MEANING OF COGNITION & COGNITIVE PSYCHOLOGY (Interactive Dual Concept Decoder)
+         ========================================== -->
+    <div class="slide active bg-gradient-to-br from-slate-950 via-purple-950 to-indigo-950 text-white p-11 px-14" data-type="intro" id="slideIntro1">
+      <!-- Header -->
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div class="flex items-center gap-3">
+          <span class="bg-purple-500/20 border border-purple-400/40 text-purple-300 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest">
+            <i class="fa-solid fa-wand-magic-sparkles mr-1"></i> Slide 1 • Core Foundations
+          </span>
+          <h2 class="serif-title text-3xl font-bold text-white">Meaning of Cognition and Cognitive Psychology</h2>
+        </div>
+        <span class="text-xs text-slate-300 bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/10">
+          <i class="fa-solid fa-hand-pointer text-purple-300 mr-1"></i> Click Stages or Press <kbd class="bg-slate-900 px-1.5 py-0.5 rounded">Space</kbd>
+        </span>
+      </div>
+
+      <!-- 3-Step Interactive Concept Switcher Bar -->
+      <div class="grid grid-cols-3 gap-5 mt-3 anim-item delay-2">
+        <!-- Tab 1: Etymology of Cognition -->
+        <div onclick="selectIntroStage(0)" class="intro-tab active-intro bg-slate-900/80 border-2 border-white/15 rounded-2xl p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-purple-400 text-slate-950 flex items-center justify-center text-xl font-extrabold shrink-0 shadow-lg">
+            <i class="fa-solid fa-spell-check"></i>
+          </div>
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-purple-300 block">Part 1 • Etymology</span>
+            <h3 class="text-lg font-bold text-white">What is "Cognition"?</h3>
+            <p class="text-xs text-slate-300">Latin origin: <em class="text-purple-200 font-semibold">cognitio</em></p>
+          </div>
+        </div>
+
+        <!-- Tab 2: The 4 Mental Operations of Cognition -->
+        <div onclick="selectIntroStage(1)" class="intro-tab bg-slate-900/80 border-2 border-white/15 rounded-2xl p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-sky-400 text-slate-950 flex items-center justify-center text-xl font-extrabold shrink-0 shadow-lg">
+            <i class="fa-solid fa-gears"></i>
+          </div>
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-sky-300 block">Part 2 • Mental Processes</span>
+            <h3 class="text-lg font-bold text-white">How Information Flows</h3>
+            <p class="text-xs text-slate-300">Acquiring → Processing → Storing → Using</p>
+          </div>
+        </div>
+
+        <!-- Tab 3: Cognitive Psychology as a Branch -->
+        <div onclick="selectIntroStage(2)" class="intro-tab bg-slate-900/80 border-2 border-white/15 rounded-2xl p-4 flex items-center gap-4">
+          <div class="w-12 h-12 rounded-2xl bg-teal-400 text-slate-950 flex items-center justify-center text-xl font-extrabold shrink-0 shadow-lg">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-wider text-teal-300 block">Part 3 • The Discipline</span>
+            <h3 class="text-lg font-bold text-white">Cognitive Psychology</h3>
+            <p class="text-xs text-slate-300">Scientific branch & everyday behaviour</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Interactive Stage Viewport -->
+      <div id="introStagePanel" class="my-auto bg-slate-900/90 border-2 border-purple-400/50 rounded-3xl p-7 shadow-2xl anim-item delay-3 transition-all">
+        <!-- Populated by selectIntroStage(0) -->
+      </div>
+
+      <!-- Bottom Interactive 5-Pillar Mental Process Bar -->
+      <div class="bg-slate-950/80 border border-white/15 rounded-2xl px-6 py-3.5 flex items-center justify-between anim-item delay-4">
+        <span class="text-xs font-extrabold uppercase tracking-wider text-purple-300 flex items-center gap-2">
+          <i class="fa-solid fa-bolt text-amber-400"></i> 5 Core Studies in Cognitive Psychology:
+        </span>
+        <div class="flex items-center gap-3">
+          <span onclick="this.classList.toggle('lit-pill')" class="mental-pill lit-pill bg-white/5 border border-white/15 px-3.5 py-1 rounded-xl text-xs font-bold text-slate-200">
+            <i class="fa-solid fa-lightbulb text-amber-300 mr-1.5"></i>1. Think
+          </span>
+          <span onclick="this.classList.toggle('lit-pill')" class="mental-pill lit-pill bg-white/5 border border-white/15 px-3.5 py-1 rounded-xl text-xs font-bold text-slate-200">
+            <i class="fa-solid fa-eye text-sky-300 mr-1.5"></i>2. Perceive
+          </span>
+          <span onclick="this.classList.toggle('lit-pill')" class="mental-pill lit-pill bg-white/5 border border-white/15 px-3.5 py-1 rounded-xl text-xs font-bold text-slate-200">
+            <i class="fa-solid fa-graduation-cap text-emerald-300 mr-1.5"></i>3. Learn
+          </span>
+          <span onclick="this.classList.toggle('lit-pill')" class="mental-pill lit-pill bg-white/5 border border-white/15 px-3.5 py-1 rounded-xl text-xs font-bold text-slate-200">
+            <i class="fa-solid fa-sd-card text-purple-300 mr-1.5"></i>4. Remember
+          </span>
+          <span onclick="this.classList.toggle('lit-pill')" class="mental-pill lit-pill bg-white/5 border border-white/15 px-3.5 py-1 rounded-xl text-xs font-bold text-slate-200">
+            <i class="fa-solid fa-puzzle-piece text-rose-300 mr-1.5"></i>5. Solve Problems
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 2: ULRIC NEISSER (1967) — COGNITIVE PSYCHOLOGY (Interactive 5-Stage Pipeline)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-950 via-amber-950/70 to-slate-900 text-white p-11 px-14" data-type="neisser" id="slideNeisser">
+      <!-- Header -->
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div class="flex items-center gap-3">
+          <span class="bg-amber-500/20 border border-amber-400/40 text-amber-300 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest">
+            <i class="fa-solid fa-book-bookmark mr-1"></i> Slide 2 • Historical Milestone (1967)
+          </span>
+          <h2 class="serif-title text-3xl font-bold text-white">Ulric Neisser (1967) — <em>Cognitive Psychology</em></h2>
+        </div>
+        <span class="text-xs text-slate-300 bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/10">
+          <i class="fa-solid fa-hand-pointer text-amber-300 mr-1"></i> Click Any Process or Press <kbd class="bg-slate-900 px-1.5 py-0.5 rounded">Space</kbd>
+        </span>
+      </div>
+
+      <!-- Landmark Work & Master Definition Banner -->
+      <div class="grid grid-cols-12 gap-4 mt-2 anim-item delay-2">
+        <!-- Landmark 1967 Book Card -->
+        <div class="col-span-5 bg-amber-500/10 border border-amber-400/40 rounded-2xl p-4 flex items-center gap-4 shadow-lg">
+          <div class="w-14 h-14 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            1967
+          </div>
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-widest text-amber-300 block">Landmark Work</span>
+            <p class="text-sm text-white font-semibold leading-snug mt-0.5">
+              Neisser’s 1967 book helped establish <strong>cognitive psychology as a distinct field</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Definition of Cognition Card -->
+        <div class="col-span-7 bg-slate-900/90 border border-teal-400/40 rounded-2xl p-4 flex items-center gap-4 shadow-lg">
+          <div class="w-12 h-12 rounded-2xl bg-teal-400/20 border border-teal-400/50 text-teal-300 flex items-center justify-center text-xl font-bold shrink-0">
+            <i class="fa-solid fa-quote-left"></i>
+          </div>
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-widest text-teal-300 block">Neisser’s Definition of Cognition</span>
+            <p class="text-sm text-slate-100 leading-snug mt-0.5">
+              "The processes through which sensory information is <strong class="text-amber-300">transformed</strong>, <strong class="text-sky-300">reduced</strong>, <strong class="text-purple-300">elaborated</strong>, <strong class="text-emerald-300">stored, recovered</strong>, and <strong class="text-rose-300">used</strong>."
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 Interactive Core Mental Processes Pipeline Nodes -->
+      <div class="grid grid-cols-5 gap-3.5 mt-3 anim-item delay-3">
+        <!-- Process 1: Transforming -->
+        <div onclick="selectNeisserStage(0)" class="neisser-node active-node bg-slate-900/85 border-2 border-white/15 rounded-2xl p-3.5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-extrabold uppercase px-2 py-0.5 rounded bg-amber-500/20 text-amber-300">Step 1</span>
+            <i class="fa-solid fa-wave-square text-amber-400 text-lg"></i>
+          </div>
+          <h4 class="text-base font-extrabold text-white">1. Transforming</h4>
+          <p class="text-xs text-slate-300 mt-1 line-clamp-2">Converting sensory input into meaningful info</p>
+        </div>
+
+        <!-- Process 2: Reducing -->
+        <div onclick="selectNeisserStage(1)" class="neisser-node bg-slate-900/85 border-2 border-white/15 rounded-2xl p-3.5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-extrabold uppercase px-2 py-0.5 rounded bg-sky-500/20 text-sky-300">Step 2</span>
+            <i class="fa-solid fa-filter text-sky-400 text-lg"></i>
+          </div>
+          <h4 class="text-base font-extrabold text-white">2. Reducing</h4>
+          <p class="text-xs text-slate-300 mt-1 line-clamp-2">Filtering information through attention</p>
+        </div>
+
+        <!-- Process 3: Elaborating -->
+        <div onclick="selectNeisserStage(2)" class="neisser-node bg-slate-900/85 border-2 border-white/15 rounded-2xl p-3.5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-extrabold uppercase px-2 py-0.5 rounded bg-purple-500/20 text-purple-300">Step 3</span>
+            <i class="fa-solid fa-diagram-project text-purple-400 text-lg"></i>
+          </div>
+          <h4 class="text-base font-extrabold text-white">3. Elaborating</h4>
+          <p class="text-xs text-slate-300 mt-1 line-clamp-2">Connecting new info with existing knowledge</p>
+        </div>
+
+        <!-- Process 4: Storing & Recovering -->
+        <div onclick="selectNeisserStage(3)" class="neisser-node bg-slate-900/85 border-2 border-white/15 rounded-2xl p-3.5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-extrabold uppercase px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300">Step 4</span>
+            <i class="fa-solid fa-box-archive text-emerald-400 text-lg"></i>
+          </div>
+          <h4 class="text-base font-extrabold text-white">4. Storing & Recovering</h4>
+          <p class="text-xs text-slate-300 mt-1 line-clamp-2">Retaining & recalling info through memory</p>
+        </div>
+
+        <!-- Process 5: Using -->
+        <div onclick="selectNeisserStage(4)" class="neisser-node bg-slate-900/85 border-2 border-white/15 rounded-2xl p-3.5 flex flex-col justify-between">
+          <div class="flex items-center justify-between mb-1.5">
+            <span class="text-xs font-extrabold uppercase px-2 py-0.5 rounded bg-rose-500/20 text-rose-300">Step 5</span>
+            <i class="fa-solid fa-chess-knight text-rose-400 text-lg"></i>
+          </div>
+          <h4 class="text-base font-extrabold text-white">5. Using</h4>
+          <p class="text-xs text-slate-300 mt-1 line-clamp-2">Applying info to make decisions & solve problems</p>
+        </div>
+      </div>
+
+      <!-- Dynamic Live Mental Process Simulator Box -->
+      <div id="neisserDetailBox" class="my-auto bg-slate-900/95 border-2 border-amber-400/50 rounded-3xl p-6 shadow-2xl anim-item delay-4 transition-all">
+        <!-- Populated dynamically via selectNeisserStage(0) -->
+      </div>
+
+      <!-- Academic Citation Footer -->
+      <div class="flex items-center justify-between bg-slate-950/90 border border-white/10 rounded-xl px-5 py-2.5 text-xs text-slate-300 anim-item delay-5">
+        <span>
+          <i class="fa-solid fa-book text-amber-400 mr-1.5"></i>
+          <strong>Reference:</strong> <em>Neisser, U. (1967). Cognitive Psychology. Appleton-Century-Crofts.</em>
+        </span>
+        <span class="text-amber-300 font-semibold">Core Mental Processes Simulator • Step <span id="neisserStepNum">1</span> of 5</span>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 3: EDUCATIONAL REQUIREMENTS & CAREER ROADMAP
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-950 via-sky-950 to-indigo-950 text-white p-11 px-14" data-type="career" id="slideEdu">
+      <!-- Header -->
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div class="flex items-center gap-3">
+          <span class="bg-sky-500/20 border border-sky-400/40 text-sky-300 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest">
+            <i class="fa-solid fa-graduation-cap mr-1"></i> Career & Academic Pathway
+          </span>
+          <h2 class="serif-title text-3xl font-bold text-white">Educational Requirements</h2>
+        </div>
+        <span class="text-xs text-slate-300 bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/10">
+          <i class="fa-solid fa-hand-pointer text-sky-300 mr-1"></i> Click Any Milestone or Press <kbd class="bg-slate-900 px-1.5 py-0.5 rounded">Space</kbd>
+        </span>
+      </div>
+
+      <!-- 4-Step Interactive Horizontal Progression Stepper -->
+      <div class="grid grid-cols-4 gap-4 mt-4 anim-item delay-2">
+        <!-- Step 1: Undergraduate -->
+        <div onclick="selectEduStage(0)" class="edu-step active-edu bg-slate-900/80 border-2 border-white/15 rounded-2xl p-4 flex flex-col justify-between relative">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-sky-500/20 text-sky-300 border border-sky-400/30">
+              Step 1 • Foundation
+            </span>
+            <div class="w-9 h-9 rounded-xl bg-sky-400 text-slate-950 flex items-center justify-center text-base font-extrabold shadow">
+              <i class="fa-solid fa-building-columns"></i>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold text-white leading-snug">1. Undergraduate Degree</h3>
+          <p class="text-xs text-sky-300 font-semibold mt-1">BA / B.Sc. in Psychology</p>
+          <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+            <span><i class="fa-regular fa-clock text-sky-400 mr-1"></i> Duration:</span>
+            <span class="font-bold text-white">3 to 4 Years</span>
+          </div>
+        </div>
+
+        <!-- Step 2: Postgraduate -->
+        <div onclick="selectEduStage(1)" class="edu-step bg-slate-900/80 border-2 border-white/15 rounded-2xl p-4 flex flex-col justify-between relative">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-teal-500/20 text-teal-300 border border-teal-400/30">
+              Step 2 • Specialization
+            </span>
+            <div class="w-9 h-9 rounded-xl bg-teal-400 text-slate-950 flex items-center justify-center text-base font-extrabold shadow">
+              <i class="fa-solid fa-microscope"></i>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold text-white leading-snug">2. Postgraduate Degree</h3>
+          <p class="text-xs text-teal-300 font-semibold mt-1">MA / M.Sc. Psychology or Cognitive Science</p>
+          <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+            <span><i class="fa-regular fa-clock text-teal-400 mr-1"></i> Duration:</span>
+            <span class="font-bold text-white">2 Years</span>
+          </div>
+        </div>
+
+        <!-- Step 3: Doctoral Level -->
+        <div onclick="selectEduStage(2)" class="edu-step bg-slate-900/80 border-2 border-white/15 rounded-2xl p-4 flex flex-col justify-between relative">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-400/30">
+              Step 3 • Mastery
+            </span>
+            <div class="w-9 h-9 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center text-base font-extrabold shadow">
+              <i class="fa-solid fa-user-graduate"></i>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold text-white leading-snug">3. Doctoral Level</h3>
+          <p class="text-xs text-amber-300 font-semibold mt-1">Ph.D. / Psy.D. in Cognitive Psychology</p>
+          <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+            <span><i class="fa-regular fa-clock text-amber-400 mr-1"></i> Duration:</span>
+            <span class="font-bold text-white">4–6 Yrs (Post-UG)</span>
+          </div>
+        </div>
+
+        <!-- Step 4: RCI License -->
+        <div onclick="selectEduStage(3)" class="edu-step bg-slate-900/80 border-2 border-white/15 rounded-2xl p-4 flex flex-col justify-between relative">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-xs font-extrabold uppercase tracking-wider px-2.5 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+              Step 4 • Clinical Practice
+            </span>
+            <div class="w-9 h-9 rounded-xl bg-emerald-400 text-slate-950 flex items-center justify-center text-base font-extrabold shadow">
+              <i class="fa-solid fa-id-card-clip"></i>
+            </div>
+          </div>
+          <h3 class="text-lg font-bold text-white leading-snug">4. RCI License</h3>
+          <p class="text-xs text-emerald-300 font-semibold mt-1">Clinical Roles [Verified Registration]</p>
+          <div class="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between text-xs text-slate-300">
+            <span><i class="fa-solid fa-shield-halved text-emerald-400 mr-1"></i> Authority:</span>
+            <span class="font-bold text-emerald-300">Mandatory in India</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic Deep-Dive Spotlight Panel (Bottom Half) -->
+      <div id="eduDetailPanel" class="my-auto bg-slate-900/90 border-2 border-sky-400/40 rounded-3xl p-6 shadow-2xl anim-item delay-3 transition-all">
+        <!-- Populated dynamically by selectEduStage() -->
+      </div>
+
+      <!-- Bottom Quick Essential Skills Bar -->
+      <div class="flex items-center justify-between bg-white/5 border border-white/10 rounded-2xl px-6 py-3 text-xs anim-item delay-4">
+        <div class="flex items-center gap-2 text-sky-300 font-bold uppercase tracking-wider">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Bonus Skills for Aspiring Cognitive Psychologists:
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="bg-slate-900 px-3 py-1 rounded-lg border border-white/10 text-slate-200"><i class="fa-solid fa-flask text-teal-400 mr-1.5"></i>Experimental Lab Design</span>
+          <span class="bg-slate-900 px-3 py-1 rounded-lg border border-white/10 text-slate-200"><i class="fa-solid fa-chart-pie text-amber-400 mr-1.5"></i>Statistics & Data Analysis (SPSS/R)</span>
+          <span class="bg-slate-900 px-3 py-1 rounded-lg border border-white/10 text-slate-200"><i class="fa-solid fa-brain text-rose-400 mr-1.5"></i>Neuroimaging & Psychometrics</span>
+          <span class="bg-slate-900 px-3 py-1 rounded-lg border border-white/10 text-slate-200"><i class="fa-solid fa-hospital-user text-emerald-400 mr-1.5"></i>Clinical Internships</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 4: AREAS OF WORK IN COGNITIVE PSYCHOLOGY (Dark Navy, Purple & Teal Theme)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-950 via-indigo-950 to-purple-950 text-white p-10 px-14" data-type="areas" id="slideAreas">
+      
+      <!-- Subtle Neural Network & Brain Background SVG Watermark (Non-intrusive) -->
+      <svg class="absolute right-[-40px] top-[-30px] w-[460px] h-[460px] text-teal-400/[0.06] pointer-events-none neural-bg-spin" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="100" cy="100" r="75" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <circle cx="100" cy="100" r="50" stroke="currentColor" stroke-width="1.2"/>
+        <line x1="45" y1="65" x2="100" y2="100" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="155" y1="65" x2="100" y2="100" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="100" y1="100" x2="100" y2="165" stroke="currentColor" stroke-width="1.5"/>
+        <line x1="55" y1="140" x2="145" y2="60" stroke="currentColor" stroke-width="1"/>
+        <circle cx="45" cy="65" r="6" fill="currentColor"/>
+        <circle cx="155" cy="65" r="6" fill="currentColor"/>
+        <circle cx="100" cy="100" r="8" fill="currentColor"/>
+        <circle cx="100" cy="165" r="6" fill="currentColor"/>
+        <circle cx="55" cy="140" r="5" fill="currentColor"/>
+        <circle cx="145" cy="60" r="5" fill="currentColor"/>
+      </svg>
+
+      <!-- Header Section -->
+      <div class="flex justify-between items-start border-b border-white/15 pb-4 relative z-10 anim-item delay-1">
+        <div class="flex items-center gap-4">
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-teal-400 text-slate-950 flex items-center justify-center text-2xl shadow-lg font-extrabold">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2.5">
+              <span class="bg-indigo-500/20 border border-indigo-400/40 text-indigo-300 text-[11px] font-extrabold uppercase tracking-widest px-3 py-0.5 rounded-full">
+                Slide 4 • Core Domains
+              </span>
+              <span id="areaFocusBadge" class="bg-purple-500/20 text-purple-300 border border-purple-400/40 text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                All 6 Areas Overview
+              </span>
+            </div>
+            <h2 class="serif-title text-3xl font-extrabold text-white tracking-tight mt-1">
+              Areas of Work in Cognitive Psychology
+            </h2>
+            <p class="text-base font-semibold text-teal-300">
+              What Does a Cognitive Psychologist Do?
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Classroom Spotlight Control -->
+        <div class="flex items-center gap-2.5">
+          <button onclick="showAllAreas()" class="bg-white/10 hover:bg-white/20 text-white border border-white/15 text-xs font-bold px-3.5 py-2 rounded-xl transition cursor-pointer flex items-center gap-1.5">
+            <i class="fa-solid fa-table-cells-large text-teal-300"></i> Show All 6
+          </button>
+          <span class="text-xs text-slate-300 bg-white/10 px-3.5 py-2 rounded-xl border border-white/10 font-medium">
+            <i class="fa-solid fa-hand-pointer text-purple-300 mr-1"></i> Click Card or Press <kbd class="bg-slate-900 text-white px-1.5 py-0.5 rounded text-[11px]">Space</kbd>
+          </span>
+        </div>
+      </div>
+
+      <!-- Balanced 2-Column, 6-Card Grid Layout -->
+      <div class="grid grid-cols-2 gap-x-7 gap-y-4 my-auto relative z-10 anim-item delay-2">
+        
+        <!-- Card 1: Memory and Learning (Navy/Sky Accent) -->
+        <div onclick="selectAreaCard(0)" class="area-card bg-slate-900/85 border border-white/15 border-l-[6px] border-l-sky-400 rounded-2xl p-5 shadow-xl flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-sky-500/20 border border-sky-400/40 text-sky-300 flex items-center justify-center text-xl shrink-0 mt-0.5">
+            <i class="fa-solid fa-book-open-reader"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-extrabold text-white">Memory and Learning</h3>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-sky-300 bg-sky-500/20 px-2.5 py-0.5 rounded-md border border-sky-400/30">01</span>
+            </div>
+            <ul class="mt-1.5 space-y-1">
+              <li class="text-slate-200 text-[16px] leading-snug font-medium flex items-start gap-2">
+                <span class="text-sky-400 font-bold">•</span>
+                <span>Studies how people <strong class="text-white">acquire, store, retain, and retrieve</strong> information.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Card 2: Attention and Perception (Purple Accent) -->
+        <div onclick="selectAreaCard(1)" class="area-card bg-slate-900/85 border border-white/15 border-l-[6px] border-l-purple-400 rounded-2xl p-5 shadow-xl flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-400/40 text-purple-300 flex items-center justify-center text-xl shrink-0 mt-0.5">
+            <i class="fa-solid fa-eye"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-extrabold text-white">Attention and Perception</h3>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-purple-300 bg-purple-500/20 px-2.5 py-0.5 rounded-md border border-purple-400/30">02</span>
+            </div>
+            <ul class="mt-1.5 space-y-1">
+              <li class="text-slate-200 text-[16px] leading-snug font-medium flex items-start gap-2">
+                <span class="text-purple-400 font-bold">•</span>
+                <span>Examines how people <strong class="text-white">focus on information</strong> and <strong class="text-white">interpret sensory experiences</strong>.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Card 3: Thinking and Problem-Solving (Teal Accent) -->
+        <div onclick="selectAreaCard(2)" class="area-card bg-slate-900/85 border border-white/15 border-l-[6px] border-l-teal-400 rounded-2xl p-5 shadow-xl flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-teal-500/20 border border-teal-400/40 text-teal-300 flex items-center justify-center text-xl shrink-0 mt-0.5">
+            <i class="fa-solid fa-puzzle-piece"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-extrabold text-white">Thinking and Problem-Solving</h3>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-teal-300 bg-teal-500/20 px-2.5 py-0.5 rounded-md border border-teal-400/30">03</span>
+            </div>
+            <ul class="mt-1.5 space-y-1">
+              <li class="text-slate-200 text-[16px] leading-snug font-medium flex items-start gap-2">
+                <span class="text-teal-400 font-bold">•</span>
+                <span>Investigates <strong class="text-white">reasoning, decision-making, planning, and problem-solving</strong>.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Card 4: Language and Comprehension (Navy/Sky Accent) -->
+        <div onclick="selectAreaCard(3)" class="area-card bg-slate-900/85 border border-white/15 border-l-[6px] border-l-sky-400 rounded-2xl p-5 shadow-xl flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-sky-500/20 border border-sky-400/40 text-sky-300 flex items-center justify-center text-xl shrink-0 mt-0.5">
+            <i class="fa-solid fa-comments"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-extrabold text-white">Language and Comprehension</h3>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-sky-300 bg-sky-500/20 px-2.5 py-0.5 rounded-md border border-sky-400/30">04</span>
+            </div>
+            <ul class="mt-1.5 space-y-1">
+              <li class="text-slate-200 text-[16px] leading-snug font-medium flex items-start gap-2">
+                <span class="text-sky-400 font-bold">•</span>
+                <span>Explores how people <strong class="text-white">understand, process, and use language</strong>.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Card 5: Cognitive Assessment (Purple Accent) -->
+        <div onclick="selectAreaCard(4)" class="area-card bg-slate-900/85 border border-white/15 border-l-[6px] border-l-purple-400 rounded-2xl p-5 shadow-xl flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 border border-purple-400/40 text-purple-300 flex items-center justify-center text-xl shrink-0 mt-0.5">
+            <i class="fa-solid fa-clipboard-check"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-extrabold text-white">Cognitive Assessment</h3>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-purple-300 bg-purple-500/20 px-2.5 py-0.5 rounded-md border border-purple-400/30">05</span>
+            </div>
+            <ul class="mt-1.5 space-y-1">
+              <li class="text-slate-200 text-[16px] leading-snug font-medium flex items-start gap-2">
+                <span class="text-purple-400 font-bold">•</span>
+                <span>Examines cognitive abilities such as <strong class="text-white">memory, attention, and reasoning</strong> using appropriate assessment methods.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Card 6: Research and Experiments (Teal Accent) -->
+        <div onclick="selectAreaCard(5)" class="area-card bg-slate-900/85 border border-white/15 border-l-[6px] border-l-teal-400 rounded-2xl p-5 shadow-xl flex items-start gap-4">
+          <div class="w-12 h-12 rounded-xl bg-teal-500/20 border border-teal-400/40 text-teal-300 flex items-center justify-center text-xl shrink-0 mt-0.5">
+            <i class="fa-solid fa-flask-vial"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-extrabold text-white">Research and Experiments</h3>
+              <span class="text-xs font-extrabold uppercase tracking-wider text-teal-300 bg-teal-500/20 px-2.5 py-0.5 rounded-md border border-teal-400/30">06</span>
+            </div>
+            <ul class="mt-1.5 space-y-1">
+              <li class="text-slate-200 text-[16px] leading-snug font-medium flex items-start gap-2">
+                <span class="text-teal-400 font-bold">•</span>
+                <span>Conducts <strong class="text-white">experiments and studies</strong> to understand human thinking and mental processes.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Interactive Cognitive Process Flow Strip -->
+      <div class="bg-slate-950/90 border border-white/15 text-white rounded-2xl px-6 py-3 flex items-center justify-between relative z-10 shadow-md anim-item delay-3">
+        <div class="flex items-center gap-3">
+          <span class="w-2.5 h-2.5 rounded-full bg-teal-400 animate-ping"></span>
+          <span class="text-xs font-extrabold uppercase tracking-widest text-teal-300">
+            Active Spotlight:
+          </span>
+          <span id="areaSpotlightText" class="text-sm font-semibold text-slate-200">
+            All 6 Core Areas Displayed — Click any card (or press Spacebar) to spotlight each domain during your talk.
+          </span>
+        </div>
+        <div class="flex items-center gap-3 text-xs font-bold text-purple-300">
+          <span><i class="fa-solid fa-network-wired text-teal-400 mr-1"></i> Cognitive Process Architecture</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 5: CAREER OPPORTUNITIES IN COGNITIVE PSYCHOLOGY (PART 1: ROLES 1–4)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-950 via-blue-950 to-teal-950 text-white p-10 px-14" data-type="opportunities1" id="slideOpp1">
+      <!-- Header -->
+      <div class="flex justify-between items-center border-b border-white/15 pb-3.5 anim-item delay-1">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-sky-400 text-slate-950 flex items-center justify-center text-xl font-extrabold shadow-lg">
+            <i class="fa-solid fa-microscope"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="bg-sky-500/20 border border-sky-400/40 text-sky-300 px-3 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-widest">
+                Slide 5 • Part 1 of 2 (Roles 1–4)
+              </span>
+              <span class="bg-teal-500/20 border border-teal-400/40 text-teal-300 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                Research & Experimental Track
+              </span>
+            </div>
+            <h2 class="serif-title text-3xl font-bold text-white mt-0.5">Career Opportunities in Cognitive Psychology</h2>
+          </div>
+        </div>
+        <span class="text-xs text-slate-300 bg-white/10 px-3.5 py-2 rounded-xl border border-white/10">
+          <i class="fa-solid fa-hand-pointer text-sky-300 mr-1"></i> Click Any Role or Press <kbd class="bg-slate-900 px-1.5 py-0.5 rounded">Space</kbd>
+        </span>
+      </div>
+
+      <!-- 2x2 Interactive Role Dossier Grid (Roles 1 to 4) -->
+      <div class="grid grid-cols-2 gap-5 my-auto anim-item delay-2">
+        <!-- Role 1: Cognitive Psychologist -->
+        <div onclick="selectOpp1(0)" class="opp-card active-opp bg-slate-900/85 border-2 border-white/15 rounded-2xl p-5 flex items-start gap-4 shadow-xl">
+          <div class="w-14 h-14 rounded-2xl bg-sky-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            <i class="fa-solid fa-brain"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-sky-300">Career Role #01</span>
+              <span class="bg-sky-500/20 text-sky-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-sky-400/30">Core Specialist</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-1">1. Cognitive Psychologist</h3>
+            <p class="text-slate-200 text-base leading-relaxed mt-1.5">
+              Studies <strong>memory, attention, perception, thinking, and reasoning</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 2: Cognitive Psychology Researcher -->
+        <div onclick="selectOpp1(1)" class="opp-card bg-slate-900/85 border-2 border-white/15 rounded-2xl p-5 flex items-start gap-4 shadow-xl">
+          <div class="w-14 h-14 rounded-2xl bg-teal-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            <i class="fa-solid fa-magnifying-glass-chart"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-teal-300">Career Role #02</span>
+              <span class="bg-teal-500/20 text-teal-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-teal-400/30">Information Processing</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-1">2. Cognitive Psychology Researcher</h3>
+            <p class="text-slate-200 text-base leading-relaxed mt-1.5">
+              Conducts research on <strong>human cognition and information processing</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 3: Cognitive Science Researcher -->
+        <div onclick="selectOpp1(2)" class="opp-card bg-slate-900/85 border-2 border-white/15 rounded-2xl p-5 flex items-start gap-4 shadow-xl">
+          <div class="w-14 h-14 rounded-2xl bg-purple-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            <i class="fa-solid fa-network-wired"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-purple-300">Career Role #03</span>
+              <span class="bg-purple-500/20 text-purple-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-purple-400/30">Interdisciplinary</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-1">3. Cognitive Science Researcher</h3>
+            <p class="text-slate-200 text-base leading-relaxed mt-1.5">
+              Investigates <strong>learning, language, reasoning, and decision-making</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 4: Experimental Psychologist -->
+        <div onclick="selectOpp1(3)" class="opp-card bg-slate-900/85 border-2 border-white/15 rounded-2xl p-5 flex items-start gap-4 shadow-xl">
+          <div class="w-14 h-14 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            <i class="fa-solid fa-flask"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-amber-300">Career Role #04</span>
+              <span class="bg-amber-500/20 text-amber-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30">Lab & Behavioural</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-1">4. Experimental Psychologist</h3>
+            <p class="text-slate-200 text-base leading-relaxed mt-1.5">
+              Uses <strong>experiments to understand cognitive processes and behaviour</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Live Role Inspector Bar -->
+      <div id="opp1Inspector" class="bg-slate-950/90 border-2 border-sky-400/50 rounded-2xl p-4 px-6 shadow-2xl flex items-center justify-between anim-item delay-3 transition-all">
+        <!-- Populated dynamically by selectOpp1(0) -->
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 6: CAREER OPPORTUNITIES IN COGNITIVE PSYCHOLOGY (PART 2: ROLES 5–8)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 text-white p-10 px-14" data-type="opportunities2" id="slideOpp2">
+      <!-- Header -->
+      <div class="flex justify-between items-center border-b border-white/15 pb-3.5 anim-item delay-1">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-xl font-extrabold shadow-lg">
+            <i class="fa-solid fa-laptop-code"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="bg-amber-500/20 border border-amber-400/40 text-amber-300 px-3 py-0.5 rounded-full text-[11px] font-extrabold uppercase tracking-widest">
+                Slide 6 • Part 2 of 2 (Roles 5–8)
+              </span>
+              <span class="bg-purple-500/20 border border-purple-400/40 text-purple-300 px-2.5 py-0.5 rounded-full text-[11px] font-bold">
+                Applied Tech, UX, HCI & Education Track
+              </span>
+            </div>
+            <h2 class="serif-title text-3xl font-bold text-white mt-0.5">Career Opportunities in Cognitive Psychology</h2>
+          </div>
+        </div>
+        <span class="text-xs text-slate-300 bg-white/10 px-3.5 py-2 rounded-xl border border-white/10">
+          <i class="fa-solid fa-hand-pointer text-amber-300 mr-1"></i> Click Any Role or Press <kbd class="bg-slate-900 px-1.5 py-0.5 rounded">Space</kbd>
+        </span>
+      </div>
+
+      <!-- 2x2 Interactive Role Dossier Grid (Roles 5 to 8) -->
+      <div class="grid grid-cols-2 gap-5 my-auto anim-item delay-2">
+        <!-- Role 5: UX Researcher -->
+        <div onclick="selectOpp2(0)" class="opp-card active-opp-2 bg-slate-900/85 border-2 border-white/15 rounded-2xl p-5 flex items-start gap-4 shadow-xl">
+          <div class="w-14 h-14 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-amber-300">Career Role #05</span>
+              <span class="bg-amber-500/20 text-amber-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-amber-400/30">Digital Products</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-1">5. UX Researcher</h3>
+            <p class="text-slate-200 text-base leading-relaxed mt-1.5">
+              Studies how people <strong>interact with digital products and make decisions</strong> while using them.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 6: Human Factors Specialist -->
+        <div onclick="selectOpp2(1)" class="opp-card bg-slate-900/85 border-2 border-white/15 rounded-2xl p-5 flex items-start gap-4 shadow-xl">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            <i class="fa-solid fa-shield-heart"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-300">Career Role #06</span>
+              <span class="bg-emerald-500/20 text-emerald-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-emerald-400/30">Usability & Safety</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-1">6. Human Factors Specialist</h3>
+            <p class="text-slate-200 text-base leading-relaxed mt-1.5">
+              Applies cognitive principles to <strong>improve the usability and safety of technology and systems</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 7: Human–Computer Interaction (HCI) Researcher -->
+        <div onclick="selectOpp2(2)" class="opp-card bg-slate-900/85 border-2 border-white/15 rounded-2xl p-5 flex items-start gap-4 shadow-xl">
+          <div class="w-14 h-14 rounded-2xl bg-cyan-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            <i class="fa-solid fa-computer"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-cyan-300">Career Role #07</span>
+              <span class="bg-cyan-500/20 text-cyan-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-cyan-400/30">Human–Tech Interface</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-1">7. Human–Computer Interaction (HCI) Researcher</h3>
+            <p class="text-slate-200 text-base leading-relaxed mt-1.5">
+              Studies how people <strong>interact with computers and digital technologies</strong>.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 8: Learning and Instructional Design Specialist -->
+        <div onclick="selectOpp2(3)" class="opp-card bg-slate-900/85 border-2 border-white/15 rounded-2xl p-5 flex items-start gap-4 shadow-xl">
+          <div class="w-14 h-14 rounded-2xl bg-rose-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+            <i class="fa-solid fa-chalkboard-user"></i>
+          </div>
+          <div class="flex-1">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-rose-300">Career Role #08</span>
+              <span class="bg-rose-500/20 text-rose-200 text-[11px] font-bold px-2.5 py-0.5 rounded-full border border-rose-400/30">Educational Design</span>
+            </div>
+            <h3 class="text-xl font-extrabold text-white mt-1">8. Learning and Instructional Design Specialist</h3>
+            <p class="text-slate-200 text-base leading-relaxed mt-1.5">
+              Applies principles of <strong>memory and learning to develop effective educational materials</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Live Role Inspector Bar -->
+      <div id="opp2Inspector" class="bg-slate-950/90 border-2 border-amber-400/50 rounded-2xl p-4 px-6 shadow-2xl flex items-center justify-between anim-item delay-3 transition-all">
+        <!-- Populated dynamically by selectOpp2(0) -->
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 7: MYTH OR FACT #1 (Willpower)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-900 via-slate-800 to-teal-950 text-white p-14" data-type="quiz">
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div>
+          <p class="text-amber-400 font-bold uppercase tracking-widest text-sm mb-1">Interactive Question 1 of 5</p>
+          <h2 class="serif-title text-3xl font-bold text-white">Ask the Class: Is this a Myth or a Fact?</h2>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl text-amber-300">
+          <i class="fa-solid fa-battery-half"></i>
+        </div>
+      </div>
+
+      <div class="my-auto flex flex-col items-center text-center max-w-4xl mx-auto w-full">
+        <div class="anim-item delay-2 w-full bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-10 shadow-2xl">
+          <span class="inline-block bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 pulse-badge">
+            Statement #1
+          </span>
+          <p class="serif-title text-3xl leading-relaxed font-semibold text-white">
+            "Willpower is a physical resource that runs out like gas in a tank."
+          </p>
+
+          <div class="quiz-prompt mt-8 flex flex-col items-center gap-4">
+            <p class="text-slate-300 text-lg italic">Ask students to vote: Is this a <strong class="text-emerald-400">FACT</strong> or a <strong class="text-rose-400">MYTH</strong>?</p>
+            <button onclick="toggleReveal(this)" class="mt-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-8 py-3.5 rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2 text-lg cursor-pointer">
+              <i class="fa-solid fa-eye"></i> Reveal Answer
+            </button>
+          </div>
+
+          <div class="answer-box text-left">
+            <div class="bg-slate-950/90 border-2 border-rose-500/70 rounded-2xl p-6 flex gap-6 items-start">
+              <div class="bg-rose-600 text-white font-extrabold px-4 py-2 rounded-xl text-xl shrink-0 flex items-center gap-2 shadow-md">
+                <i class="fa-solid fa-xmark"></i> IT'S A MYTH!
+              </div>
+              <div>
+                <h4 class="text-emerald-400 font-bold uppercase tracking-wider text-sm mb-1">
+                  <i class="fa-solid fa-check-circle mr-1"></i> The Scientific Fact:
+                </h4>
+                <p class="text-slate-100 text-lg leading-relaxed">
+                  Loss of willpower is driven by <strong>motivation and boredom</strong>, not a physical drain on your brain's energy.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-slate-400 text-sm anim-item delay-3">
+        Cognitive Psychology Classroom Discussion • Click "Reveal Answer" after students vote
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 8: MYTH OR FACT #2 (Brain Training Apps)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white p-14" data-type="quiz">
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div>
+          <p class="text-amber-400 font-bold uppercase tracking-widest text-sm mb-1">Interactive Question 2 of 5</p>
+          <h2 class="serif-title text-3xl font-bold text-white">Ask the Class: Is this a Myth or a Fact?</h2>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl text-amber-300">
+          <i class="fa-solid fa-puzzle-piece"></i>
+        </div>
+      </div>
+
+      <div class="my-auto flex flex-col items-center text-center max-w-4xl mx-auto w-full">
+        <div class="anim-item delay-2 w-full bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-10 shadow-2xl">
+          <span class="inline-block bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 pulse-badge">
+            Statement #2
+          </span>
+          <p class="serif-title text-3xl leading-relaxed font-semibold text-white">
+            "'Brain training' apps and crosswords prevent overall cognitive decline."
+          </p>
+
+          <div class="quiz-prompt mt-8 flex flex-col items-center gap-4">
+            <p class="text-slate-300 text-lg italic">Ask students to vote: Is this a <strong class="text-emerald-400">FACT</strong> or a <strong class="text-rose-400">MYTH</strong>?</p>
+            <button onclick="toggleReveal(this)" class="mt-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-8 py-3.5 rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2 text-lg cursor-pointer">
+              <i class="fa-solid fa-eye"></i> Reveal Answer
+            </button>
+          </div>
+
+          <div class="answer-box text-left">
+            <div class="bg-slate-950/90 border-2 border-rose-500/70 rounded-2xl p-6 flex gap-6 items-start">
+              <div class="bg-rose-600 text-white font-extrabold px-4 py-2 rounded-xl text-xl shrink-0 flex items-center gap-2 shadow-md">
+                <i class="fa-solid fa-xmark"></i> IT'S A MYTH!
+              </div>
+              <div>
+                <h4 class="text-emerald-400 font-bold uppercase tracking-wider text-sm mb-1">
+                  <i class="fa-solid fa-check-circle mr-1"></i> The Scientific Fact:
+                </h4>
+                <p class="text-slate-100 text-lg leading-relaxed">
+                  They only make you better at the <strong>specific game you are playing</strong>, rather than boosting everyday problem-solving or general memory.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-slate-400 text-sm anim-item delay-3">
+        Cognitive Psychology Classroom Discussion • Click "Reveal Answer" after students vote
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 9: MYTH OR FACT #3 (Blind Hearing)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-900 via-emerald-950 to-slate-900 text-white p-14" data-type="quiz">
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div>
+          <p class="text-amber-400 font-bold uppercase tracking-widest text-sm mb-1">Interactive Question 3 of 5</p>
+          <h2 class="serif-title text-3xl font-bold text-white">Ask the Class: Is this a Myth or a Fact?</h2>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl text-amber-300">
+          <i class="fa-solid fa-ear-listen"></i>
+        </div>
+      </div>
+
+      <div class="my-auto flex flex-col items-center text-center max-w-4xl mx-auto w-full">
+        <div class="anim-item delay-2 w-full bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-10 shadow-2xl">
+          <span class="inline-block bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 pulse-badge">
+            Statement #3
+          </span>
+          <p class="serif-title text-3xl leading-relaxed font-semibold text-white">
+            "Blind people experience a drastic, superhuman sharpening of their physical sense of hearing."
+          </p>
+
+          <div class="quiz-prompt mt-8 flex flex-col items-center gap-4">
+            <p class="text-slate-300 text-lg italic">Ask students to vote: Is this a <strong class="text-emerald-400">FACT</strong> or a <strong class="text-rose-400">MYTH</strong>?</p>
+            <button onclick="toggleReveal(this)" class="mt-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-8 py-3.5 rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2 text-lg cursor-pointer">
+              <i class="fa-solid fa-eye"></i> Reveal Answer
+            </button>
+          </div>
+
+          <div class="answer-box text-left">
+            <div class="bg-slate-950/90 border-2 border-rose-500/70 rounded-2xl p-6 flex gap-6 items-start">
+              <div class="bg-rose-600 text-white font-extrabold px-4 py-2 rounded-xl text-xl shrink-0 flex items-center gap-2 shadow-md">
+                <i class="fa-solid fa-xmark"></i> IT'S A MYTH!
+              </div>
+              <div>
+                <h4 class="text-emerald-400 font-bold uppercase tracking-wider text-sm mb-1">
+                  <i class="fa-solid fa-check-circle mr-1"></i> The Scientific Fact:
+                </h4>
+                <p class="text-slate-100 text-lg leading-relaxed">
+                  Their physical hearing mechanics are identical to sighted people; instead, the brain <strong>repurposes the unused visual cortex</strong> to process auditory information, allowing for superior cognitive processing of echoes and sound locations.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-slate-400 text-sm anim-item delay-3">
+        Cognitive Psychology Classroom Discussion • Click "Reveal Answer" after students vote
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 10: MYTH OR FACT #4 (Extrovert vs Introvert Leaders)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-900 via-purple-950 to-slate-900 text-white p-14" data-type="quiz">
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div>
+          <p class="text-amber-400 font-bold uppercase tracking-widest text-sm mb-1">Interactive Question 4 of 5</p>
+          <h2 class="serif-title text-3xl font-bold text-white">Ask the Class: Is this a Myth or a Fact?</h2>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl text-amber-300">
+          <i class="fa-solid fa-users-gear"></i>
+        </div>
+      </div>
+
+      <div class="my-auto flex flex-col items-center text-center max-w-4xl mx-auto w-full">
+        <div class="anim-item delay-2 w-full bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-10 shadow-2xl">
+          <span class="inline-block bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 pulse-badge">
+            Statement #4
+          </span>
+          <p class="serif-title text-3xl leading-relaxed font-semibold text-white">
+            "Extroverts are naturally better leaders because they are highly talkative and charismatic."
+          </p>
+
+          <div class="quiz-prompt mt-8 flex flex-col items-center gap-4">
+            <p class="text-slate-300 text-lg italic">Ask students to vote: Is this a <strong class="text-emerald-400">FACT</strong> or a <strong class="text-rose-400">MYTH</strong>?</p>
+            <button onclick="toggleReveal(this)" class="mt-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-8 py-3.5 rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2 text-lg cursor-pointer">
+              <i class="fa-solid fa-eye"></i> Reveal Answer
+            </button>
+          </div>
+
+          <div class="answer-box text-left">
+            <div class="bg-slate-950/90 border-2 border-rose-500/70 rounded-2xl p-6 flex gap-6 items-start">
+              <div class="bg-rose-600 text-white font-extrabold px-4 py-2 rounded-xl text-xl shrink-0 flex items-center gap-2 shadow-md">
+                <i class="fa-solid fa-xmark"></i> IT'S A MYTH!
+              </div>
+              <div>
+                <h4 class="text-emerald-400 font-bold uppercase tracking-wider text-sm mb-1">
+                  <i class="fa-solid fa-check-circle mr-1"></i> The Scientific Fact:
+                </h4>
+                <p class="text-slate-100 text-lg leading-relaxed">
+                  Introverted leaders often <strong>outperform extroverts</strong> when managing proactive employees, because they excel at listening, processing ideas deeply, and letting others take initiative.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-slate-400 text-sm anim-item delay-3">
+        Cognitive Psychology Classroom Discussion • Click "Reveal Answer" after students vote
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 11: MYTH OR FACT #5 (10% Brain Capacity)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-900 via-cyan-950 to-slate-900 text-white p-14" data-type="quiz">
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div>
+          <p class="text-amber-400 font-bold uppercase tracking-widest text-sm mb-1">Interactive Question 5 of 5</p>
+          <h2 class="serif-title text-3xl font-bold text-white">Ask the Class: Is this a Myth or a Fact?</h2>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center text-2xl text-amber-300">
+          <i class="fa-solid fa-brain"></i>
+        </div>
+      </div>
+
+      <div class="my-auto flex flex-col items-center text-center max-w-4xl mx-auto w-full">
+        <div class="anim-item delay-2 w-full bg-white/10 backdrop-blur-md border border-white/15 rounded-3xl p-10 shadow-2xl">
+          <span class="inline-block bg-amber-400 text-slate-950 font-extrabold text-xs uppercase tracking-widest px-4 py-1.5 rounded-full mb-5 pulse-badge">
+            Statement #5
+          </span>
+          <p class="serif-title text-3xl leading-relaxed font-semibold text-white">
+            "Humans only use about 10% of their brain capacity."
+          </p>
+
+          <div class="quiz-prompt mt-8 flex flex-col items-center gap-4">
+            <p class="text-slate-300 text-lg italic">Ask students to vote: Is this a <strong class="text-emerald-400">FACT</strong> or a <strong class="text-rose-400">MYTH</strong>?</p>
+            <button onclick="toggleReveal(this)" class="mt-2 bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold px-8 py-3.5 rounded-xl shadow-lg transition transform hover:scale-105 flex items-center gap-2 text-lg cursor-pointer">
+              <i class="fa-solid fa-eye"></i> Reveal Answer
+            </button>
+          </div>
+
+          <div class="answer-box text-left">
+            <div class="bg-slate-950/90 border-2 border-rose-500/70 rounded-2xl p-6 flex gap-6 items-start">
+              <div class="bg-rose-600 text-white font-extrabold px-4 py-2 rounded-xl text-xl shrink-0 flex items-center gap-2 shadow-md">
+                <i class="fa-solid fa-xmark"></i> IT'S A MYTH!
+              </div>
+              <div>
+                <h4 class="text-emerald-400 font-bold uppercase tracking-wider text-sm mb-1">
+                  <i class="fa-solid fa-check-circle mr-1"></i> The Reality / Fact:
+                </h4>
+                <p class="text-slate-100 text-xl leading-relaxed">
+                  Neuroimaging studies reveal that <strong>virtually the entire brain is active</strong> over the course of a day, even during rest.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-slate-400 text-sm anim-item delay-3">
+        Up Next: How do psychologists discover these facts? Through Case Studies!
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 12: CASE STUDY SLIDE 1 (Interactive Investigator's Hub)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-950 via-teal-950 to-slate-900 text-white p-11 px-14" data-type="study" id="slideCase1">
+      <!-- Header -->
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div class="flex items-center gap-3">
+          <span class="bg-teal-500/20 border border-teal-400/40 text-teal-300 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest">
+            <i class="fa-solid fa-magnifying-glass mr-1"></i> Slide 1 of 3 • Investigation Method
+          </span>
+          <h2 class="serif-title text-3xl font-bold text-white">Case Study in Cognitive Psychology</h2>
+        </div>
+        <button onclick="unlockAllClues()" class="bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 text-teal-200 text-xs font-bold px-4 py-2 rounded-xl transition cursor-pointer flex items-center gap-2">
+          <i class="fa-solid fa-unlock-keyhole"></i> Unlock All 4 Pillars (<kbd class="bg-slate-900 px-1.5 py-0.5 rounded">Space</kbd>)
+        </button>
+      </div>
+
+      <!-- Core Definition Hero Banner -->
+      <div class="anim-item delay-2 bg-gradient-to-r from-teal-900/50 via-slate-900/80 to-teal-900/50 border border-teal-400/30 rounded-2xl p-5 px-7 shadow-xl flex items-center justify-between gap-6">
+        <div class="flex items-center gap-5">
+          <div class="w-14 h-14 rounded-2xl bg-teal-400 text-slate-950 flex items-center justify-center text-2xl font-bold shrink-0 shadow-lg">
+            <i class="fa-solid fa-folder-open"></i>
+          </div>
+          <div>
+            <span class="text-teal-300 text-xs font-extrabold uppercase tracking-widest">Meaning & Core Definition</span>
+            <p class="serif-title text-2xl text-white font-semibold mt-0.5">
+              "A case study is an <span class="text-teal-300 underline decoration-teal-400/50">in-depth investigation</span> of an individual or a specific case."
+            </p>
+          </div>
+        </div>
+        <div class="text-right shrink-0 hidden xl:block">
+          <span class="text-xs text-slate-400 block">Interactive Dossier</span>
+          <span id="clueProgress" class="text-teal-300 font-bold text-sm">0 / 4 Pillars Unlocked</span>
+        </div>
+      </div>
+
+      <!-- 4 Interactive Investigation Pillars (Click to Unlock) -->
+      <div class="anim-item delay-3 grid grid-cols-2 gap-5 my-auto h-[340px]">
+        <!-- Pillar 1 -->
+        <div onclick="toggleClue(this)" class="clue-card bg-white/5 border border-white/15 rounded-2xl p-6 flex flex-col justify-center">
+          <!-- Locked Front -->
+          <div class="locked-view flex flex-col items-center text-center my-auto">
+            <div class="w-14 h-14 rounded-2xl bg-teal-500/20 border border-teal-400/40 text-teal-300 flex items-center justify-center text-2xl mb-3 pulse-badge">
+              <i class="fa-solid fa-bullseye"></i>
+            </div>
+            <span class="text-xs uppercase tracking-widest text-teal-400 font-bold mb-1">Investigation Pillar #1</span>
+            <h3 class="text-xl font-bold text-white mb-2">Why Do Psychologists Use It?</h3>
+            <span class="text-xs bg-white/10 text-slate-300 px-3 py-1 rounded-full"><i class="fa-solid fa-hand-pointer mr-1"></i> Click to Unlock</span>
+          </div>
+          <!-- Unlocked Back -->
+          <div class="unlocked-view bg-gradient-to-br from-teal-950 to-slate-900 border-2 border-teal-400 rounded-2xl p-6 flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-teal-400 text-slate-950 flex items-center justify-center text-3xl shrink-0 shadow-lg">
+              <i class="fa-solid fa-brain"></i>
+            </div>
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-widest text-teal-300 block mb-1">1. Core Purpose</span>
+              <p class="text-xl text-white font-medium leading-snug">
+                It helps psychologists <strong>understand human cognitive processes</strong> deeply.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar 2 -->
+        <div onclick="toggleClue(this)" class="clue-card bg-white/5 border border-white/15 rounded-2xl p-6 flex flex-col justify-center">
+          <div class="locked-view flex flex-col items-center text-center my-auto">
+            <div class="w-14 h-14 rounded-2xl bg-amber-500/20 border border-amber-400/40 text-amber-300 flex items-center justify-center text-2xl mb-3 pulse-badge">
+              <i class="fa-solid fa-microchip"></i>
+            </div>
+            <span class="text-xs uppercase tracking-widest text-amber-400 font-bold mb-1">Investigation Pillar #2</span>
+            <h3 class="text-xl font-bold text-white mb-2">What Mental Processes Are Studied?</h3>
+            <span class="text-xs bg-white/10 text-slate-300 px-3 py-1 rounded-full"><i class="fa-solid fa-hand-pointer mr-1"></i> Click to Unlock</span>
+          </div>
+          <div class="unlocked-view bg-gradient-to-br from-amber-950/90 to-slate-900 border-2 border-amber-400 rounded-2xl p-6 flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-3xl shrink-0 shadow-lg">
+              <i class="fa-solid fa-layer-group"></i>
+            </div>
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-widest text-amber-300 block mb-1">2. Five Cognitive Focus Areas</span>
+              <p class="text-lg text-white font-medium leading-snug mb-2">
+                It focuses on:
+              </p>
+              <div class="flex flex-wrap gap-1.5">
+                <span class="bg-amber-400/20 border border-amber-400/50 text-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg">Memory</span>
+                <span class="bg-amber-400/20 border border-amber-400/50 text-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg">Attention</span>
+                <span class="bg-amber-400/20 border border-amber-400/50 text-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg">Perception</span>
+                <span class="bg-amber-400/20 border border-amber-400/50 text-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg">Learning</span>
+                <span class="bg-amber-400/20 border border-amber-400/50 text-amber-200 text-xs font-bold px-2.5 py-1 rounded-lg">Thinking</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar 3 -->
+        <div onclick="toggleClue(this)" class="clue-card bg-white/5 border border-white/15 rounded-2xl p-6 flex flex-col justify-center">
+          <div class="locked-view flex flex-col items-center text-center my-auto">
+            <div class="w-14 h-14 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 flex items-center justify-center text-2xl mb-3 pulse-badge">
+              <i class="fa-solid fa-clipboard-list"></i>
+            </div>
+            <span class="text-xs uppercase tracking-widest text-cyan-400 font-bold mb-1">Investigation Pillar #3</span>
+            <h3 class="text-xl font-bold text-white mb-2">How Is Information Collected?</h3>
+            <span class="text-xs bg-white/10 text-slate-300 px-3 py-1 rounded-full"><i class="fa-solid fa-hand-pointer mr-1"></i> Click to Unlock</span>
+          </div>
+          <div class="unlocked-view bg-gradient-to-br from-cyan-950 to-slate-900 border-2 border-cyan-400 rounded-2xl p-6 flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-cyan-400 text-slate-950 flex items-center justify-center text-3xl shrink-0 shadow-lg">
+              <i class="fa-solid fa-magnifying-glass-chart"></i>
+            </div>
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-widest text-cyan-300 block mb-1">3. Data Collection Methods</span>
+              <p class="text-lg text-white font-medium leading-snug">
+                Information is collected through <strong>interviews, observations and psychological assessments</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pillar 4 -->
+        <div onclick="toggleClue(this)" class="clue-card bg-white/5 border border-white/15 rounded-2xl p-6 flex flex-col justify-center">
+          <div class="locked-view flex flex-col items-center text-center my-auto">
+            <div class="w-14 h-14 rounded-2xl bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 flex items-center justify-center text-2xl mb-3 pulse-badge">
+              <i class="fa-solid fa-earth-americas"></i>
+            </div>
+            <span class="text-xs uppercase tracking-widest text-emerald-400 font-bold mb-1">Investigation Pillar #4</span>
+            <h3 class="text-xl font-bold text-white mb-2">What Outcome Does It Provide?</h3>
+            <span class="text-xs bg-white/10 text-slate-300 px-3 py-1 rounded-full"><i class="fa-solid fa-hand-pointer mr-1"></i> Click to Unlock</span>
+          </div>
+          <div class="unlocked-view bg-gradient-to-br from-emerald-950 to-slate-900 border-2 border-emerald-400 rounded-2xl p-6 flex items-center gap-5">
+            <div class="w-16 h-16 rounded-2xl bg-emerald-400 text-slate-950 flex items-center justify-center text-3xl shrink-0 shadow-lg">
+              <i class="fa-solid fa-user-check"></i>
+            </div>
+            <div>
+              <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-300 block mb-1">4. Real-World Value</span>
+              <p class="text-xl text-white font-medium leading-snug">
+                It provides <strong>detailed insights into real-life behaviour</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="text-center text-slate-400 text-xs anim-item delay-4">
+        Interactive Investigator Board • Click any card as you explain it, or press <kbd class="px-1.5 py-0.5 bg-slate-800 rounded">Space</kbd> to unlock the next pillar
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 13: CASE STUDY SLIDE 2 (Patient H.M. Interactive Medical Dossier)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 text-white p-11 px-14" data-type="study" id="slideCase2">
+      <!-- Top Bar -->
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div class="flex items-center gap-3">
+          <span class="bg-amber-500/20 border border-amber-400/40 text-amber-300 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest">
+            <i class="fa-solid fa-file-medical mr-1"></i> Slide 2 of 3 • Clinical Archive #1953-HM
+          </span>
+          <h2 class="serif-title text-3xl font-bold text-white">Example of a Case Study: The Case of H.M.</h2>
+        </div>
+        <span class="text-xs text-slate-300 bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/10">
+          <i class="fa-solid fa-hand-pointer text-amber-300 mr-1"></i> Click Timeline Steps or Press <kbd class="bg-slate-900 px-1.5 py-0.5 rounded">Space</kbd>
+        </span>
+      </div>
+
+      <!-- Main Split Layout: Left = Patient Profile + Timeline Tabs | Right = Dynamic Brain Lab Stage -->
+      <div class="grid grid-cols-12 gap-6 my-auto h-[500px] items-stretch anim-item delay-2">
+        
+        <!-- Left Column (5 Cols): Patient Card & 4 Interactive Timeline Steps -->
+        <div class="col-span-5 flex flex-col justify-between bg-slate-900/80 border border-white/15 rounded-3xl p-5 shadow-xl">
+          <!-- Patient Identity Header -->
+          <div class="flex items-center gap-4 pb-4 border-b border-white/10">
+            <div class="w-14 h-14 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center text-2xl font-extrabold shrink-0 shadow-md">
+              H.M.
+            </div>
+            <div>
+              <span class="text-xs uppercase tracking-widest text-amber-400 font-bold">Famous Cognitive Patient</span>
+              <h3 class="text-xl font-bold text-white">Henry Molaison (H.M.)</h3>
+              <p class="text-xs text-slate-300">Studied extensively in cognitive psychology</p>
+            </div>
+          </div>
+
+          <!-- Interactive Timeline Buttons -->
+          <div class="flex flex-col gap-2.5 my-auto py-2">
+            <button onclick="selectHMStage(0)" class="hm-tab active-tab text-left p-3.5 rounded-2xl border border-white/10 bg-white/5 flex items-center gap-3.5 cursor-pointer">
+              <span class="w-8 h-8 rounded-xl bg-amber-400 text-slate-950 font-extrabold flex items-center justify-center text-sm shrink-0">1</span>
+              <div>
+                <span class="text-xs text-amber-300 font-bold uppercase tracking-wider block">1953 Medical History</span>
+                <span class="text-sm font-semibold text-white">The Epilepsy Brain Surgery</span>
+              </div>
+            </button>
+
+            <button onclick="selectHMStage(1)" class="hm-tab text-left p-3.5 rounded-2xl border border-white/10 bg-white/5 flex items-center gap-3.5 cursor-pointer">
+              <span class="w-8 h-8 rounded-xl bg-rose-500/30 text-rose-300 font-extrabold flex items-center justify-center text-sm shrink-0">2</span>
+              <div>
+                <span class="text-xs text-rose-300 font-bold uppercase tracking-wider block">Post-Surgery Deficit</span>
+                <span class="text-sm font-semibold text-white">What Happened to Long-Term Memory?</span>
+              </div>
+            </button>
+
+            <button onclick="selectHMStage(2)" class="hm-tab text-left p-3.5 rounded-2xl border border-white/10 bg-white/5 flex items-center gap-3.5 cursor-pointer">
+              <span class="w-8 h-8 rounded-xl bg-emerald-500/30 text-emerald-300 font-extrabold flex items-center justify-center text-sm shrink-0">3</span>
+              <div>
+                <span class="text-xs text-emerald-300 font-bold uppercase tracking-wider block">Surprising Discovery</span>
+                <span class="text-sm font-semibold text-white">Could He Still Learn Motor Skills?</span>
+              </div>
+            </button>
+
+            <button onclick="selectHMStage(3)" class="hm-tab text-left p-3.5 rounded-2xl border border-white/10 bg-white/5 flex items-center gap-3.5 cursor-pointer">
+              <span class="w-8 h-8 rounded-xl bg-teal-500/30 text-teal-300 font-extrabold flex items-center justify-center text-sm shrink-0">4</span>
+              <div>
+                <span class="text-xs text-teal-300 font-bold uppercase tracking-wider block">Landmark Conclusion</span>
+                <span class="text-sm font-semibold text-white">Different Brain Systems for Memory</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="text-xs text-slate-400 text-center pt-2 border-t border-white/10">
+            Step <span id="hmStepNum" class="text-amber-300 font-bold">1</span> of 4 Active
+          </div>
+        </div>
+
+        <!-- Right Column (7 Cols): Interactive Visual Brain & Clinical Evidence Display -->
+        <div class="col-span-7 bg-slate-900/90 border border-white/15 rounded-3xl p-7 flex flex-col justify-between relative overflow-hidden shadow-2xl">
+          
+          <!-- Interactive SVG Brain Status Header -->
+          <div class="flex items-center justify-between bg-slate-950/80 border border-white/10 rounded-2xl p-4 px-6">
+            <div class="flex items-center gap-4">
+              <!-- Stylized SVG Brain Indicator -->
+              <div id="hmBrainIcon" class="w-16 h-16 rounded-2xl bg-amber-500/20 border border-amber-400/50 flex items-center justify-center text-3xl text-amber-300 brain-glow transition-all">
+                <i class="fa-solid fa-brain"></i>
+              </div>
+              <div>
+                <span id="hmStageBadge" class="text-xs font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded bg-amber-400 text-slate-950">
+                  Stage 1 • Clinical Background (1953)
+                </span>
+                <h3 id="hmStageTitle" class="serif-title text-2xl font-bold text-white mt-1">
+                  The Patient & The 1953 Surgery
+                </h3>
+              </div>
+            </div>
+            <div id="hmStatusPill" class="text-right">
+              <span class="text-xs text-slate-400 block">Clinical Status</span>
+              <span class="text-sm font-bold text-amber-300">Epilepsy Intervention</span>
+            </div>
+          </div>
+
+          <!-- Dynamic Evidence Content Box -->
+          <div id="hmStageBody" class="my-auto py-4">
+            <!-- Populated dynamically via JS (Default Stage 0) -->
+            <div class="bg-amber-500/10 border-l-4 border-amber-400 rounded-r-2xl p-6 space-y-4">
+              <p class="text-xl text-slate-100 leading-relaxed">
+                • <strong>Henry Molaison (H.M.)</strong> was a famous patient studied in cognitive psychology.
+              </p>
+              <p class="text-xl text-slate-100 leading-relaxed">
+                • In <strong>1953</strong>, he underwent brain surgery to treat <strong>severe epilepsy</strong>.
+              </p>
+              <div class="pt-2 flex items-center gap-3 text-amber-300 text-sm font-semibold">
+                <i class="fa-solid fa-circle-question text-lg"></i>
+                <span>Ask the Class: While his seizures improved, what unexpected side effect occurred after surgery?</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Quick-Summary Strip of All 3 Key Takeaways -->
+          <div class="grid grid-cols-3 gap-3 pt-3 border-t border-white/10 text-xs">
+            <div class="bg-white/5 rounded-xl p-2.5 px-3 border border-white/10">
+              <span class="text-rose-400 font-bold block"><i class="fa-solid fa-xmark mr-1"></i> Impaired:</span>
+              <span class="text-slate-300">Forming new long-term memories</span>
+            </div>
+            <div class="bg-white/5 rounded-xl p-2.5 px-3 border border-white/10">
+              <span class="text-emerald-400 font-bold block"><i class="fa-solid fa-check mr-1"></i> Intact:</span>
+              <span class="text-slate-300">Learning new motor skills</span>
+            </div>
+            <div class="bg-white/5 rounded-xl p-2.5 px-3 border border-white/10">
+              <span class="text-teal-300 font-bold block"><i class="fa-solid fa-lightbulb mr-1"></i> Proved:</span>
+              <span class="text-slate-300">Separate brain memory systems</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="text-center text-slate-400 text-xs anim-item delay-3">
+        Interactive Clinical Case Explorer • Press <kbd class="px-1.5 py-0.5 bg-slate-800 rounded">Space</kbd> to step through H.M.'s medical timeline (1 → 4)
+      </div>
+    </div>
+
+    <!-- ==========================================
+         SLIDE 14: CASE STUDY SLIDE 3 (Interactive Scientific Balance Scale)
+         ========================================== -->
+    <div class="slide bg-gradient-to-br from-slate-950 via-purple-950 to-slate-900 text-white p-11 px-14" data-type="study" id="slideCase3">
+      <!-- Header -->
+      <div class="flex justify-between items-center anim-item delay-1">
+        <div class="flex items-center gap-3">
+          <span class="bg-teal-500/20 border border-teal-400/40 text-teal-300 px-3.5 py-1 rounded-full text-xs font-extrabold uppercase tracking-widest">
+            <i class="fa-solid fa-scale-balanced mr-1"></i> Slide 3 of 3 • Critical Evaluation
+          </span>
+          <h2 class="serif-title text-3xl font-bold text-white">Importance and Limitations of Case Study</h2>
+        </div>
+        <button onclick="revealNextEval()" class="bg-teal-400 hover:bg-teal-300 text-slate-950 font-extrabold text-xs px-4 py-2.5 rounded-xl shadow-lg transition cursor-pointer flex items-center gap-2">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> Reveal Next Point (<kbd class="bg-slate-900 text-white px-1.5 py-0.5 rounded">Space</kbd>)
+        </button>
+      </div>
+
+      <!-- Two-Column Interactive Weighing Board -->
+      <div class="grid grid-cols-2 gap-6 my-auto anim-item delay-2">
+        
+        <!-- Left Scale Pan: IMPORTANCE (3 Clickable Points) -->
+        <div class="bg-emerald-950/30 border-2 border-emerald-500/40 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+          <div class="flex items-center justify-between pb-3 border-b border-emerald-500/30">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-xl bg-emerald-500 text-slate-950 flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-plus"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-extrabold text-emerald-300 uppercase tracking-wider">Importance of Case Study</h3>
+                <p class="text-xs text-slate-300">Click each strength to weigh its scientific value</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-full">Strengths</span>
+          </div>
+
+          <div class="space-y-3 my-4">
+            <div onclick="toggleEvalItem(this)" class="eval-item revealed-item bg-slate-900/90 border border-emerald-500/40 rounded-2xl p-4 flex items-center gap-4">
+              <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold flex items-center justify-center shrink-0">1</span>
+              <p class="text-base text-slate-100 font-medium">
+                Provides <strong>detailed information</strong> about cognitive processes.
+              </p>
+            </div>
+
+            <div onclick="toggleEvalItem(this)" class="eval-item bg-slate-900/90 border border-emerald-500/40 rounded-2xl p-4 flex items-center gap-4">
+              <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold flex items-center justify-center shrink-0">2</span>
+              <p class="text-base text-slate-100 font-medium">
+                Helps understand <strong>memory disorders and brain functions</strong>.
+              </p>
+            </div>
+
+            <div onclick="toggleEvalItem(this)" class="eval-item bg-slate-900/90 border border-emerald-500/40 rounded-2xl p-4 flex items-center gap-4">
+              <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold flex items-center justify-center shrink-0">3</span>
+              <p class="text-base text-slate-100 font-medium">
+                Connects <strong>psychological theories</strong> with real-life observations.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Scale Pan: LIMITATIONS (3 Clickable Points) -->
+        <div class="bg-rose-950/30 border-2 border-rose-500/40 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+          <div class="flex items-center justify-between pb-3 border-b border-rose-500/30">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-xl bg-rose-500 text-white flex items-center justify-center text-xl font-bold">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+              </div>
+              <div>
+                <h3 class="text-xl font-extrabold text-rose-300 uppercase tracking-wider">Limitations</h3>
+                <p class="text-xs text-slate-300">Click each limitation to evaluate caution areas</p>
+              </div>
+            </div>
+            <span class="text-xs font-bold bg-rose-500/20 text-rose-300 px-3 py-1 rounded-full">Challenges</span>
+          </div>
+
+          <div class="space-y-3 my-4">
+            <div onclick="toggleEvalItem(this)" class="eval-item bg-slate-900/90 border border-rose-500/40 rounded-2xl p-4 flex items-center gap-4">
+              <span class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-300 font-bold flex items-center justify-center shrink-0">1</span>
+              <p class="text-base text-slate-100 font-medium">
+                Findings from one individual <strong>may not apply to everyone</strong>.
+              </p>
+            </div>
+
+            <div onclick="toggleEvalItem(this)" class="eval-item bg-slate-900/90 border border-rose-500/40 rounded-2xl p-4 flex items-center gap-4">
+              <span class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-300 font-bold flex items-center justify-center shrink-0">2</span>
+              <p class="text-base text-slate-100 font-medium">
+                The results may be influenced by <strong>individual circumstances</strong>.
+              </p>
+            </div>
+
+            <div onclick="toggleEvalItem(this)" class="eval-item bg-slate-900/90 border border-rose-500/40 rounded-2xl p-4 flex items-center gap-4">
+              <span class="w-8 h-8 rounded-lg bg-rose-500/20 text-rose-300 font-bold flex items-center justify-center shrink-0">3</span>
+              <p class="text-base text-slate-100 font-medium">
+                Some findings are <strong>difficult to generalize</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Final Verdict Conclusion Banner -->
+      <div id="finalVerdict" onclick="this.classList.toggle('unlocked-verdict')" class="verdict-banner cursor-pointer bg-gradient-to-r from-teal-900 via-emerald-900 to-teal-900 border-2 border-teal-400 rounded-2xl p-4 px-8 shadow-2xl flex items-center justify-between anim-item delay-3">
+        <div class="flex items-center gap-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-400 text-slate-950 flex items-center justify-center text-2xl font-bold shrink-0">
+            <i class="fa-solid fa-gavel"></i>
+          </div>
+          <div>
+            <span class="text-xs font-extrabold uppercase tracking-widest text-amber-300 block">Final Conclusion</span>
+            <p class="serif-title text-xl font-bold text-white">
+              Conclusion: Case studies play an important role in understanding human cognition.
+            </p>
+          </div>
+        </div>
+        <span class="text-xs bg-white/10 text-teal-200 px-3 py-1.5 rounded-lg border border-white/15">
+          Final Takeaway
+        </span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation Bar -->
+  <div class="w-full flex items-center justify-between mt-4 px-2">
+    <button id="prevBtn" onclick="changeSlide(-1)" class="bg-slate-800 hover:bg-slate-700 disabled:opacity-40 text-white font-semibold px-5 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer">
+      <i class="fa-solid fa-arrow-left"></i> Previous Slide
+    </button>
+
+    <!-- Slide Dots -->
+    <div id="dotsContainer" class="flex items-center gap-2"></div>
+
+    <button id="nextBtn" onclick="changeSlide(1)" class="bg-teal-600 hover:bg-teal-500 disabled:opacity-40 text-white font-semibold px-6 py-2.5 rounded-xl flex items-center gap-2 transition cursor-pointer shadow-lg">
+      Next Slide <i class="fa-solid fa-arrow-right"></i>
+    </button>
+  </div>
+
+  </div><!-- /#app -->
+
+  <script>
+    'use strict';
+
+    /* =====================================================================
+       1. DOM REFERENCES & SMALL HELPERS
+       ===================================================================== */
+    const slides        = Array.from(document.querySelectorAll('.slide'));
+    const slideCounter  = document.getElementById('slideCounter');
+    const sectionBadge  = document.getElementById('sectionBadge');
+    const prevBtn       = document.getElementById('prevBtn');
+    const nextBtn       = document.getElementById('nextBtn');
+    const dotsContainer = document.getElementById('dotsContainer');
+    const appEl         = document.getElementById('app');
+
+    const byId = id => document.getElementById(id);
+    const nextIndex = (current, length) => (current + 1) % length;
+    const setActiveClass = (nodes, activeIdx, className) =>
+      nodes.forEach((node, i) => node.classList.toggle(className, i === activeIdx));
+
+    /* =====================================================================
+       2. SLIDE NAVIGATION (badge, counter, dots, prev/next)
+       NOTE: Functions declared below are intentionally global because the
+       slide markup calls them from inline onclick="" attributes.
+       ===================================================================== */
+    const BADGE_TAIL = 'px-3 py-1 rounded-full font-semibold tracking-wide uppercase text-xs';
+
+    // One entry per slide "type" (data-type attribute in the markup).
+    // title(n, total): n = position inside its own group (e.g. quiz 3 of 5).
+    // tip(n): hover title for the navigation dot (defaults to title).
+    const SECTIONS = {
+      intro:          { icon: 'fa-brain',          dot: 'bg-purple-400', tone: 'bg-purple-500/20 text-purple-300 border border-purple-500/40', title: () => 'Slide 1: Meaning of Cognition & Cognitive Psychology' },
+      neisser:        { icon: 'fa-book-bookmark',  dot: 'bg-amber-400',  tone: 'bg-amber-500/20 text-amber-300 border border-amber-500/40',    title: () => 'Slide 2: Ulric Neisser (1967) — Cognitive Psychology' },
+      career:         { icon: 'fa-graduation-cap', dot: 'bg-sky-400',    tone: 'bg-sky-500/20 text-sky-300 border border-sky-500/40',          title: () => 'Slide 3: Educational Requirements' },
+      areas:          { icon: 'fa-network-wired',  dot: 'bg-indigo-400', tone: 'bg-indigo-500/20 text-indigo-300 border border-indigo-400/40', title: () => 'Slide 4: Areas of Work in Cognitive Psychology' },
+      opportunities1: { icon: 'fa-briefcase',      dot: 'bg-sky-400',    tone: 'bg-sky-500/20 text-sky-300 border border-sky-500/40',          title: () => 'Slide 5: Career Opportunities (Part 1: Roles 1–4)' },
+      opportunities2: { icon: 'fa-laptop-code',    dot: 'bg-amber-400',  tone: 'bg-amber-500/20 text-amber-300 border border-amber-500/40',    title: () => 'Slide 6: Career Opportunities (Part 2: Roles 5–8)' },
+      quiz:           { icon: 'fa-bolt',           dot: 'bg-amber-400',  tone: 'bg-amber-500/20 text-amber-300 border border-amber-500/40',    title: (n, total) => `Interactive Warm-Up: Myth or Fact? (${n}/${total})`, tip: n => `Myth/Fact #${n}` },
+      study:          { icon: 'fa-book-open',      dot: 'bg-teal-400',   tone: 'bg-teal-500/20 text-teal-300 border border-teal-500/40',       title: (n, total) => `Main Topic: Case Studies (${n}/${total})`,           tip: n => `Case Study Slide ${n}` }
+    };
+
+    const slideTypes = slides.map(slide => slide.getAttribute('data-type'));
+    const slideMeta = slideTypes.map((type, idx) => ({
+      section: SECTIONS[type],
+      n: slideTypes.slice(0, idx + 1).filter(t => t === type).length,
+      total: slideTypes.filter(t => t === type).length
+    }));
+
+    let currentIndex = 0;
+
+    function slideTitle(idx) {
+      const { section, n, total } = slideMeta[idx];
+      return section.title(n, total);
+    }
+
+    function slideTip(idx) {
+      const { section, n } = slideMeta[idx];
+      return section.tip ? section.tip(n) : slideTitle(idx);
+    }
+
+    function buildDots() {
+      slides.forEach((slide, idx) => {
+        const dot = document.createElement('button');
+        dot.className = 'h-2.5 w-2.5 rounded-full bg-slate-700 hover:bg-slate-500 transition-all cursor-pointer';
+        dot.title = slideTip(idx);
+        dot.setAttribute('aria-label', `Go to slide ${idx + 1}`);
+        dot.onclick = () => goToSlide(idx);
+        dotsContainer.appendChild(dot);
+      });
+    }
+
+    function updateUI() {
+      slides.forEach((slide, idx) => {
+        const isActive = idx === currentIndex;
+        slide.classList.toggle('active', isActive);
+        slide.setAttribute('aria-hidden', String(!isActive));
+      });
+
+      const { section } = slideMeta[currentIndex];
+      slideCounter.textContent = `Slide ${currentIndex + 1} of ${slides.length}`;
+      sectionBadge.className = `${section.tone} ${BADGE_TAIL}`;
+      sectionBadge.innerHTML = `<i class="fa-solid ${section.icon} mr-1"></i> ${slideTitle(currentIndex)}`;
+
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === slides.length - 1;
+
+      Array.from(dotsContainer.children).forEach((dot, idx) => {
+        dot.className = idx === currentIndex
+          ? `h-2.5 w-8 rounded-full transition-all cursor-pointer ${slideMeta[idx].section.dot}`
+          : 'h-2.5 w-2.5 rounded-full bg-slate-700 hover:bg-slate-500 transition-all cursor-pointer';
+      });
+    }
+
+    function changeSlide(dir) {
+      const nextIdx = currentIndex + dir;
+      if (nextIdx >= 0 && nextIdx < slides.length) {
+        currentIndex = nextIdx;
+        updateUI();
+      }
+    }
+
+    function goToSlide(idx) {
+      currentIndex = idx;
+      updateUI();
+    }
+
+    /* =====================================================================
+       3. SLIDE 1 — Meaning of Cognition (3-part concept decoder)
+       ===================================================================== */
+    const introStages = [
+      {
+        badge: 'Part 1 of 3 • Etymology & Origin',
+        badgeColor: 'bg-purple-400 text-slate-950',
+        borderColor: 'border-purple-400/50',
+        title: 'Cognition: Word Origin & Meaning',
+        mainBullet1: 'Derived from the Latin word <em class="text-purple-300 font-bold underline">cognitio</em>, meaning <strong>"knowledge"</strong> or <strong>"knowing."</strong>',
+        mainBullet2: 'Refers to the internal mental processes through which human beings understand and make sense of the world.',
+        visualRightTitle: 'Latin Root Decoder',
+        visualRightContent: `
+          <div class="text-center py-3 space-y-2">
+            <span class="text-xs uppercase tracking-widest text-purple-300 font-bold block">Latin Root Word</span>
+            <div class="serif-title text-4xl font-extrabold text-white tracking-wide">"Cognitio"</div>
+            <div class="text-amber-300 text-lg font-bold flex items-center justify-center gap-2 pt-1">
+              <i class="fa-solid fa-arrow-down"></i>
+              <span>"Knowledge" or "Knowing"</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        badge: 'Part 2 of 3 • Definition of Cognition',
+        badgeColor: 'bg-sky-400 text-slate-950',
+        borderColor: 'border-sky-400/50',
+        title: 'Cognition: Mental Processes in Action',
+        mainBullet1: 'Refers to <strong>mental processes</strong> involved in <strong>acquiring, processing, storing, and using information</strong>.',
+        mainBullet2: 'Every time you read a page, recall a friend’s name, or decide what to say next, these 4 cognitive operations work together seamlessly.',
+        visualRightTitle: '4-Step Mental Information Cycle',
+        visualRightContent: `
+          <div class="grid grid-cols-2 gap-2.5 text-xs">
+            <div class="bg-sky-500/20 border border-sky-400/40 p-3 rounded-xl">
+              <strong class="text-sky-300 block mb-0.5">1. Acquiring</strong> Taking in raw sensory inputs
+            </div>
+            <div class="bg-purple-500/20 border border-purple-400/40 p-3 rounded-xl">
+              <strong class="text-purple-300 block mb-0.5">2. Processing</strong> Interpreting & organizing meaning
+            </div>
+            <div class="bg-emerald-500/20 border border-emerald-400/40 p-3 rounded-xl">
+              <strong class="text-emerald-300 block mb-0.5">3. Storing</strong> Retaining knowledge in memory
+            </div>
+            <div class="bg-amber-500/20 border border-amber-400/40 p-3 rounded-xl">
+              <strong class="text-amber-300 block mb-0.5">4. Using</strong> Guiding real-life actions & choices
+            </div>
+          </div>
+        `
+      },
+      {
+        badge: 'Part 3 of 3 • The Scientific Branch',
+        badgeColor: 'bg-teal-400 text-slate-950',
+        borderColor: 'border-teal-400/50',
+        title: 'What is Cognitive Psychology?',
+        mainBullet1: 'A <strong>branch of psychology</strong> that studies how people <strong>think, perceive, learn, remember, and solve problems</strong>.',
+        mainBullet2: 'It explains how <strong>mental processes influence our understanding of the world and everyday behaviour</strong>.',
+        visualRightTitle: 'Impact on Everyday Behaviour',
+        visualRightContent: `
+          <div class="space-y-2.5 text-sm">
+            <div class="bg-teal-500/15 border border-teal-400/40 p-3 rounded-xl flex items-center gap-3">
+              <i class="fa-solid fa-globe text-teal-300 text-xl"></i>
+              <span>Shapes <strong>how we understand the world</strong> around us.</span>
+            </div>
+            <div class="bg-amber-500/15 border border-amber-400/40 p-3 rounded-xl flex items-center gap-3">
+              <i class="fa-solid fa-person-walking text-amber-300 text-xl"></i>
+              <span>Directly drives our <strong>everyday human behaviour & decisions</strong>.</span>
+            </div>
+          </div>
+        `
+      }
+    ];
+
+    let currentIntroStage = 0;
+
+    function selectIntroStage(idx) {
+      currentIntroStage = idx;
+      const d = introStages[idx];
+      setActiveClass(Array.from(document.querySelectorAll('#slideIntro1 .intro-tab')), idx, 'active-intro');
+
+      const panel = byId('introStagePanel');
+      panel.className = `my-auto bg-slate-900/90 border-2 ${d.borderColor} rounded-3xl p-7 shadow-2xl transition-all`;
+      panel.innerHTML = `
+        <div class="grid grid-cols-12 gap-7 items-center">
+          <div class="col-span-7 space-y-4 border-r border-white/10 pr-6">
+            <span class="text-xs font-extrabold uppercase tracking-widest px-3 py-1 rounded-full ${d.badgeColor}">
+              ${d.badge}
+            </span>
+            <h3 class="serif-title text-3xl font-bold text-white">${d.title}</h3>
+            <div class="space-y-3 text-lg text-slate-100 leading-relaxed">
+              <p class="flex items-start gap-3">
+                <i class="fa-solid fa-circle-check text-purple-400 mt-1.5 shrink-0"></i>
+                <span>${d.mainBullet1}</span>
+              </p>
+              <p class="flex items-start gap-3">
+                <i class="fa-solid fa-circle-check text-teal-400 mt-1.5 shrink-0"></i>
+                <span>${d.mainBullet2}</span>
+              </p>
+            </div>
+          </div>
+          <div class="col-span-5 bg-slate-950/90 border border-white/15 rounded-2xl p-5 flex flex-col justify-between space-y-3">
+            <div class="flex items-center justify-between border-b border-white/10 pb-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">${d.visualRightTitle}</span>
+              <span class="text-xs text-purple-300 font-bold">Concept ${idx + 1} / 3</span>
+            </div>
+            ${d.visualRightContent}
+            <div class="text-right text-xs text-slate-400 pt-1">
+              Press <kbd class="bg-slate-800 px-1.5 py-0.5 rounded text-slate-200">Space</kbd> for next concept →
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* =====================================================================
+       4. SLIDE 2 — Neisser (1967) 5-stage pipeline
+       ===================================================================== */
+    const neisserStages = [
+      {
+        step: 1,
+        name: 'Transforming',
+        badgeColor: 'bg-amber-400 text-slate-950',
+        borderColor: 'border-amber-400/50',
+        icon: 'fa-wave-square',
+        definition: 'Converting sensory input into meaningful information.',
+        examExample: 'Seeing black shapes on your exam paper (light waves hitting the retina) and recognizing them as readable letters and words.'
+      },
+      {
+        step: 2,
+        name: 'Reducing',
+        badgeColor: 'bg-sky-400 text-slate-950',
+        borderColor: 'border-sky-400/50',
+        icon: 'fa-filter',
+        definition: 'Filtering information through attention.',
+        examExample: 'Tuning out hallway noise or a ticking clock in the exam hall so your brain focuses strictly on the question in front of you.'
+      },
+      {
+        step: 3,
+        name: 'Elaborating',
+        badgeColor: 'bg-purple-400 text-slate-950',
+        borderColor: 'border-purple-400/50',
+        icon: 'fa-diagram-project',
+        definition: 'Connecting new information with existing knowledge.',
+        examExample: 'Linking the exam question about "Case Studies" to examples you already studied in class, like Patient H.M.'
+      },
+      {
+        step: 4,
+        name: 'Storing and Recovering',
+        badgeColor: 'bg-emerald-400 text-slate-950',
+        borderColor: 'border-emerald-400/50',
+        icon: 'fa-box-archive',
+        definition: 'Retaining and recalling information through memory.',
+        examExample: 'Retrieving stored definitions, dates (like 1967 or 1953), and psychological concepts from your long-term memory.'
+      },
+      {
+        step: 5,
+        name: 'Using',
+        badgeColor: 'bg-rose-400 text-slate-950',
+        borderColor: 'border-rose-400/50',
+        icon: 'fa-chess-knight',
+        definition: 'Applying information to make decisions and solve problems.',
+        examExample: 'Structuring and writing your final exam answer clearly to solve the question and earn full marks!'
+      }
+    ];
+
+    let currentNeisserStage = 0;
+
+    function selectNeisserStage(idx) {
+      currentNeisserStage = idx;
+      const d = neisserStages[idx];
+      setActiveClass(Array.from(document.querySelectorAll('#slideNeisser .neisser-node')), idx, 'active-node');
+
+      const stepEl = byId('neisserStepNum');
+      if (stepEl) stepEl.textContent = idx + 1;
+
+      const box = byId('neisserDetailBox');
+      box.className = `my-auto bg-slate-900/95 border-2 ${d.borderColor} rounded-3xl p-6 shadow-2xl transition-all`;
+      box.innerHTML = `
+        <div class="grid grid-cols-12 gap-6 items-center">
+          <div class="col-span-7 space-y-3 border-r border-white/10 pr-6">
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-extrabold uppercase tracking-widest px-3 py-1 rounded-full ${d.badgeColor}">
+                Core Mental Process #${d.step} of 5
+              </span>
+              <span class="text-xs text-slate-400 font-semibold">Neisser (1967) Framework</span>
+            </div>
+            <h3 class="serif-title text-3xl font-bold text-white flex items-center gap-3">
+              <i class="fa-solid ${d.icon} text-amber-300"></i> ${d.name}
+            </h3>
+            <p class="text-2xl text-slate-100 font-semibold leading-relaxed bg-white/5 p-4 rounded-2xl border border-white/10">
+              "${d.definition}"
+            </p>
+          </div>
+          <div class="col-span-5 bg-slate-950/90 border border-white/10 rounded-2xl p-5 space-y-2.5">
+            <div class="flex items-center gap-2 text-amber-300 text-xs font-extrabold uppercase tracking-wider">
+              <i class="fa-solid fa-chalkboard-user"></i> Real-Life Classroom Example (Answering an Exam Question):
+            </div>
+            <p class="text-sm text-slate-200 leading-relaxed">
+              ${d.examExample}
+            </p>
+            <div class="text-right text-xs text-slate-400 pt-1">
+              Press <kbd class="bg-slate-800 px-1.5 py-0.5 rounded text-white">Space</kbd> for Next Mental Process →
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* =====================================================================
+       5. SLIDE 3 — Educational requirements explorer
+       ===================================================================== */
+    const eduStages = [
+      {
+        stepBadge: 'Stage 1 of 4 • Academic Foundation',
+        badgeColor: 'bg-sky-400 text-slate-950',
+        borderColor: 'border-sky-400/50',
+        degreeTitle: '1. Undergraduate Degree: BA / B.Sc. in Psychology',
+        duration: '3 to 4 Years (Including NEP 4-Year Honours with Research Track)',
+        coreRequirement: 'Builds a strong foundation in general psychology, biological bases of behavior, and basic cognitive processes.',
+        whatYouLearn: [
+          'Introduction to Memory, Attention, Perception & Learning',
+          'Psychological Testing, Practicums & Basic Experimental Methods',
+          'Foundations of Biopsychology & Developmental Psychology'
+        ],
+        careerOutcome: 'Research Assistant, Mental Health Support Worker, HR/Behavioral Analyst, or eligibility for Master’s programs.'
+      },
+      {
+        stepBadge: 'Stage 2 of 4 • Advanced Specialization',
+        badgeColor: 'bg-teal-400 text-slate-950',
+        borderColor: 'border-teal-400/50',
+        degreeTitle: '2. Postgraduate Degree: MA / M.Sc. in Psychology or Cognitive Science',
+        duration: '2 Years (Full-Time Master’s Degree)',
+        coreRequirement: 'Intensive specialization in human cognition, neuroimaging techniques, experimental design, and dissertation research.',
+        whatYouLearn: [
+          'Advanced Cognitive Psychology & Cognitive Neuroscience',
+          'Psychometrics, Neuropsychological Assessment & Behavioral Labs',
+          'Master’s Dissertation / Field Internship in Hospitals or Labs'
+        ],
+        careerOutcome: 'Cognitive Research Associate, UX/Human Factors Specialist, Academic Counselor, or entry into Doctoral/RCI tracks.'
+      },
+      {
+        stepBadge: 'Stage 3 of 4 • Research & Clinical Mastery',
+        badgeColor: 'bg-amber-400 text-slate-950',
+        borderColor: 'border-amber-400/50',
+        degreeTitle: '3. Doctoral Level: Ph.D. / Psy.D. in Cognitive Psychology or Cognitive Science',
+        duration: '4 to 6 Years (Beyond Undergraduate Studies)',
+        coreRequirement: 'Highest academic qualification focusing on original scientific research (Ph.D.) or advanced clinical doctorate practice (Psy.D.).',
+        whatYouLearn: [
+          'Independent Research on Memory Disorders, AI & Human Cognition',
+          'Brain Mapping (fMRI, EEG/ERP) & Computational Modeling',
+          'Publishing Peer-Reviewed Papers & University-Level Teaching'
+        ],
+        careerOutcome: 'University Professor, Principal Cognitive Scientist, Senior Neuropsychologist, or Chief Research Director.'
+      },
+      {
+        stepBadge: 'Stage 4 of 4 • Mandatory Clinical Certification',
+        badgeColor: 'bg-emerald-400 text-slate-950',
+        borderColor: 'border-emerald-400/50',
+        degreeTitle: '4. RCI License: Clinical Roles [Verified Professional Registration]',
+        duration: 'Required if You Want to Practice in Clinical Roles (e.g., M.Phil. / Psy.D. / RCI Approved Track)',
+        coreRequirement: 'To legally assess, diagnose, and treat patients in clinical settings in India, registration with the Rehabilitation Council of India (RCI) is mandatory.',
+        whatYouLearn: [
+          'Supervised Clinical Residency & Neurological Patient Rehabilitation',
+          'Diagnostic Case Formulations (Amnesia, Dementia, TBI, Epilepsy Cases)',
+          'Ethical Clinical Practice & Official RCI CRR Number Verification'
+        ],
+        careerOutcome: 'Licensed Clinical Psychologist, Hospital Neuro-Rehabilitation Specialist, & Independent Clinical Practitioner.'
+      }
+    ];
+
+    let currentEduStage = 0;
+
+    function selectEduStage(idx) {
+      currentEduStage = idx;
+      const d = eduStages[idx];
+      setActiveClass(Array.from(document.querySelectorAll('#slideEdu .edu-step')), idx, 'active-edu');
+
+      const panel = byId('eduDetailPanel');
+      panel.className = `my-auto bg-slate-900/90 border-2 ${d.borderColor} rounded-3xl p-6 shadow-2xl transition-all`;
+      panel.innerHTML = `
+        <div class="grid grid-cols-12 gap-6 items-center">
+          <div class="col-span-7 space-y-3 border-r border-white/10 pr-6">
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-extrabold uppercase tracking-widest px-3 py-1 rounded-full ${d.badgeColor}">
+                ${d.stepBadge}
+              </span>
+              <span class="text-xs text-slate-300 font-semibold bg-white/10 px-3 py-1 rounded-full">
+                <i class="fa-regular fa-clock mr-1"></i> ${d.duration}
+              </span>
+            </div>
+            <h3 class="serif-title text-2xl font-bold text-white">${d.degreeTitle}</h3>
+            <p class="text-slate-200 text-base leading-relaxed">${d.coreRequirement}</p>
+            <div class="pt-1">
+              <span class="text-xs font-bold uppercase tracking-wider text-sky-300 block mb-1.5">
+                <i class="fa-solid fa-book-open-reader mr-1"></i> Key Focus & Practical Training (Added Context):
+              </span>
+              <ul class="space-y-1 text-sm text-slate-200">
+                ${d.whatYouLearn.map(item => `<li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-teal-400 text-xs"></i> <span>${item}</span></li>`).join('')}
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-span-5 flex flex-col justify-between bg-slate-950/90 border border-white/10 rounded-2xl p-5 space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-11 h-11 rounded-xl ${d.badgeColor} flex items-center justify-center text-xl font-bold shrink-0">
+                <i class="fa-solid fa-briefcase"></i>
+              </div>
+              <div>
+                <span class="text-xs uppercase tracking-widest text-slate-400 font-bold block">Unlocked Career Roles</span>
+                <h4 class="text-base font-bold text-white">What Can You Do After This Stage?</h4>
+              </div>
+            </div>
+            <p class="text-sm text-slate-200 leading-relaxed bg-white/5 p-3.5 rounded-xl border border-white/10">
+              ${d.careerOutcome}
+            </p>
+            <div class="flex items-center justify-between text-xs text-slate-400 pt-1">
+              <span>Milestone ${idx + 1} of 4</span>
+              <span class="text-sky-300 font-semibold">Press Spacebar for Next Step →</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    /* =====================================================================
+       6. SLIDE 4 — Areas of work (6-card spotlight)
+       ===================================================================== */
+    const areaSummaries = [
+      'Area 1 of 6 • Memory and Learning: Acquiring, storing, retaining, and retrieving information.',
+      'Area 2 of 6 • Attention and Perception: Focusing on information and interpreting sensory experiences.',
+      'Area 3 of 6 • Thinking and Problem-Solving: Reasoning, decision-making, planning, and problem-solving.',
+      'Area 4 of 6 • Language and Comprehension: Understanding, processing, and using language.',
+      'Area 5 of 6 • Cognitive Assessment: Evaluating memory, attention, and reasoning via assessment methods.',
+      'Area 6 of 6 • Research and Experiments: Conducting studies to understand human thinking and mental processes.'
+    ];
+
+    const AREA_COUNT = areaSummaries.length;
+    const AREA_RING = ['ring-2', 'ring-purple-400/70'];
+    const AREAS_DEFAULT_TEXT = 'All 6 Core Areas Displayed — Click any card (or press Spacebar) to spotlight each domain during your talk.';
+    let currentAreaIndex = -1; // -1 = all six shown, no spotlight
+
+    function selectAreaCard(idx) {
+      if (currentAreaIndex === idx) {
+        showAllAreas();
+        return;
+      }
+      currentAreaIndex = idx;
+
+      document.querySelectorAll('#slideAreas .area-card').forEach((card, i) => {
+        const isSelected = i === idx;
+        card.classList.toggle('active-area', isSelected);
+        card.classList.toggle('dimmed-area', !isSelected);
+        AREA_RING.forEach(cls => card.classList.toggle(cls, isSelected));
+      });
+
+      byId('areaFocusBadge').textContent = `Spotlighting Area 0${idx + 1} of 06`;
+      byId('areaSpotlightText').textContent = areaSummaries[idx];
+    }
+
+    function showAllAreas() {
+      currentAreaIndex = -1;
+      document.querySelectorAll('#slideAreas .area-card').forEach(card => {
+        card.classList.remove('active-area', 'dimmed-area', ...AREA_RING);
+      });
+      byId('areaFocusBadge').textContent = 'All 6 Areas Overview';
+      byId('areaSpotlightText').textContent = AREAS_DEFAULT_TEXT;
+    }
+
+    /* =====================================================================
+       7. SLIDES 5 & 6 — Career opportunities (role inspector bars)
+       ===================================================================== */
+    const opp1Data = [
+      {
+        num: '01',
+        title: 'Cognitive Psychologist',
+        summary: 'Studies memory, attention, perception, thinking, and reasoning.',
+        workplace: 'Universities, Cognitive Labs & Clinical Assessment Centers',
+        pillars: ['Memory', 'Attention', 'Perception', 'Thinking', 'Reasoning']
+      },
+      {
+        num: '02',
+        title: 'Cognitive Psychology Researcher',
+        summary: 'Conducts research on human cognition and information processing.',
+        workplace: 'Academic Research Institutes & Brain Science Centers',
+        pillars: ['Human Cognition', 'Information Processing', 'Mental Models']
+      },
+      {
+        num: '03',
+        title: 'Cognitive Science Researcher',
+        summary: 'Investigates learning, language, reasoning, and decision-making.',
+        workplace: 'Interdisciplinary Cognitive Science & AI Labs',
+        pillars: ['Learning', 'Language', 'Reasoning', 'Decision-Making']
+      },
+      {
+        num: '04',
+        title: 'Experimental Psychologist',
+        summary: 'Uses experiments to understand cognitive processes and behaviour.',
+        workplace: 'Controlled Behavioural & Psychological Testing Laboratories',
+        pillars: ['Controlled Experiments', 'Cognitive Processes', 'Human Behaviour']
+      }
+    ];
+
+    const opp2Data = [
+      {
+        num: '05',
+        title: 'UX Researcher',
+        summary: 'Studies how people interact with digital products and make decisions while using them.',
+        workplace: 'Tech Companies, Product Design Teams & Digital Platforms',
+        pillars: ['User Interaction', 'Digital Products', 'Decision-Making']
+      },
+      {
+        num: '06',
+        title: 'Human Factors Specialist',
+        summary: 'Applies cognitive principles to improve the usability and safety of technology and systems.',
+        workplace: 'Aviation, Healthcare Systems, Automotive & Ergonomics Labs',
+        pillars: ['Cognitive Principles', 'System Usability', 'Human Safety']
+      },
+      {
+        num: '07',
+        title: 'Human–Computer Interaction (HCI) Researcher',
+        summary: 'Studies how people interact with computers and digital technologies.',
+        workplace: 'HCI Labs, AI/VR Interfaces & Computing Research Centers',
+        pillars: ['Human–Computer Interaction', 'Digital Technologies', 'Interface Cognition']
+      },
+      {
+        num: '08',
+        title: 'Learning and Instructional Design Specialist',
+        summary: 'Applies principles of memory and learning to develop effective educational materials.',
+        workplace: 'EdTech, Universities, Curriculum & Training Organizations',
+        pillars: ['Memory Principles', 'Learning Science', 'Educational Materials']
+      }
+    ];
+
+    // Both slides share one renderer; only the colours and element ids differ.
+    const OPP_THEMES = {
+      opp1: { slide: '#slideOpp1', inspector: 'opp1Inspector', data: opp1Data, activeClass: 'active-opp',
+              numBg: 'bg-sky-400', title: 'text-sky-300', pill: 'bg-sky-500/20 border border-sky-400/40 text-sky-200' },
+      opp2: { slide: '#slideOpp2', inspector: 'opp2Inspector', data: opp2Data, activeClass: 'active-opp-2',
+              numBg: 'bg-amber-400', title: 'text-amber-300', pill: 'bg-amber-500/20 border border-amber-400/40 text-amber-200' }
+    };
+    const oppState = { opp1: 0, opp2: 0 };
+
+    function renderOpp(key, idx) {
+      const theme = OPP_THEMES[key];
+      const d = theme.data[idx];
+      oppState[key] = idx;
+      setActiveClass(Array.from(document.querySelectorAll(`${theme.slide} .opp-card`)), idx, theme.activeClass);
+
+      const inspector = byId(theme.inspector);
+      if (!inspector) return;
+      inspector.innerHTML = `
+        <div class="flex items-center gap-4">
+          <div class="w-11 h-11 rounded-xl ${theme.numBg} text-slate-950 font-extrabold flex items-center justify-center text-base shrink-0">
+            #${d.num}
+          </div>
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-extrabold uppercase tracking-wider ${theme.title}">Active Role Spotlight: ${d.title}</span>
+              <span class="text-xs text-slate-400">• ${d.workplace}</span>
+            </div>
+            <p class="text-sm text-white font-semibold mt-0.5">${d.summary}</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          ${d.pillars.map(p => `<span class="${theme.pill} text-xs font-bold px-2.5 py-1 rounded-lg">${p}</span>`).join('')}
+        </div>
+      `;
+    }
+
+    function selectOpp1(idx) { renderOpp('opp1', idx); }
+    function selectOpp2(idx) { renderOpp('opp2', idx); }
+
+    /* =====================================================================
+       8. SLIDES 7–11 — Myth or Fact (reveal / hide answer)
+       ===================================================================== */
+    const REVEAL_BTN_IDLE = ['bg-amber-400', 'hover:bg-amber-300', 'text-slate-950'];
+    const REVEAL_BTN_ACTIVE = ['bg-slate-700', 'text-white'];
+
+    function toggleReveal(btn) {
+      const answerBox = btn.closest('.anim-item').querySelector('.answer-box');
+      const wasRevealed = answerBox.classList.contains('revealed');
+
+      // Remember the original label the first time we change it
+      if (!btn.getAttribute('data-label')) btn.setAttribute('data-label', btn.innerHTML);
+
+      if (!wasRevealed) {
+        answerBox.classList.add('revealed');
+        btn.innerHTML = '<i class="fa-solid fa-eye-slash"></i> Hide Answer';
+        btn.classList.remove(...REVEAL_BTN_IDLE);
+        btn.classList.add(...REVEAL_BTN_ACTIVE);
+      } else {
+        answerBox.classList.remove('revealed');
+        btn.innerHTML = btn.getAttribute('data-label');
+        btn.classList.remove(...REVEAL_BTN_ACTIVE);
+        btn.classList.add(...REVEAL_BTN_IDLE);
+      }
+    }
+
+    /* =====================================================================
+       9. SLIDE 12 — Case study: 4 investigation pillars
+       ===================================================================== */
+    function updateClueCounter() {
+      const unlocked = document.querySelectorAll('#slideCase1 .clue-card.unlocked').length;
+      const counterEl = byId('clueProgress');
+      if (counterEl) counterEl.textContent = `${unlocked} / 4 Pillars Unlocked`;
+    }
+
+    function toggleClue(card) {
+      card.classList.toggle('unlocked');
+      updateClueCounter();
+    }
+
+    function unlockAllClues() {
+      const cards = Array.from(document.querySelectorAll('#slideCase1 .clue-card'));
+      const allUnlocked = cards.every(card => card.classList.contains('unlocked'));
+      cards.forEach(card => card.classList.toggle('unlocked', !allUnlocked));
+      updateClueCounter();
+    }
+
+    /* =====================================================================
+       10. SLIDE 13 — Case study: Patient H.M. timeline
+       ===================================================================== */
+    const hmStages = [
+      {
+        badge: 'Stage 1 • Clinical Background (1953)',
+        badgeColor: 'bg-amber-400 text-slate-950',
+        title: 'The Patient & The 1953 Surgery',
+        status: 'Epilepsy Intervention',
+        statusColor: 'text-amber-300',
+        iconClass: 'bg-amber-500/20 border-amber-400/50 text-amber-300',
+        body: `
+          <div class="bg-amber-500/10 border-l-4 border-amber-400 rounded-r-2xl p-6 space-y-4">
+            <p class="text-xl text-slate-100 leading-relaxed">
+              • <strong>Henry Molaison (H.M.)</strong> was a famous patient studied in cognitive psychology.
+            </p>
+            <p class="text-xl text-slate-100 leading-relaxed">
+              • In <strong>1953</strong>, he underwent brain surgery to treat <strong>severe epilepsy</strong>.
+            </p>
+            <div class="pt-2 flex items-center gap-3 text-amber-300 text-sm font-semibold">
+              <i class="fa-solid fa-circle-question text-lg"></i>
+              <span>Discussion Prompt: What happened to his memory after this surgery?</span>
+            </div>
+          </div>
+        `
+      },
+      {
+        badge: 'Stage 2 • Post-Surgery Deficit',
+        badgeColor: 'bg-rose-500 text-white',
+        title: 'Loss of New Long-Term Memories',
+        status: 'Explicit Memory Impaired',
+        statusColor: 'text-rose-400',
+        iconClass: 'bg-rose-500/20 border-rose-400/50 text-rose-300',
+        body: `
+          <div class="bg-rose-500/10 border-l-4 border-rose-500 rounded-r-2xl p-6 space-y-4">
+            <div class="flex items-center gap-3 text-rose-400 font-extrabold uppercase tracking-wider text-sm">
+              <i class="fa-solid fa-triangle-exclamation text-lg"></i> Key Clinical Observation
+            </div>
+            <p class="text-2xl text-white font-semibold leading-relaxed">
+              "After surgery, he developed <strong>difficulty forming new long-term memories</strong>."
+            </p>
+            <p class="text-slate-300 text-base">
+              New events, faces, or facts could not be stored into permanent long-term memory.
+            </p>
+          </div>
+        `
+      },
+      {
+        badge: 'Stage 3 • Surprising Preserved Ability',
+        badgeColor: 'bg-emerald-400 text-slate-950',
+        title: 'Motor Skill Learning Remained Intact!',
+        status: 'Procedural Memory Active',
+        statusColor: 'text-emerald-400',
+        iconClass: 'bg-emerald-500/20 border-emerald-400/50 text-emerald-300',
+        body: `
+          <div class="bg-emerald-500/10 border-l-4 border-emerald-400 rounded-r-2xl p-6 space-y-4">
+            <div class="flex items-center gap-3 text-emerald-400 font-extrabold uppercase tracking-wider text-sm">
+              <i class="fa-solid fa-check-double text-lg"></i> Unexpected Discovery
+            </div>
+            <p class="text-2xl text-white font-semibold leading-relaxed">
+              "He <strong>could learn certain motor skills</strong> despite having memory difficulties."
+            </p>
+            <p class="text-slate-300 text-base">
+              Even though he couldn't remember practicing a physical task, his hands got better at performing it!
+            </p>
+          </div>
+        `
+      },
+      {
+        badge: 'Stage 4 • Scientific Breakthrough',
+        badgeColor: 'bg-teal-400 text-slate-950',
+        title: 'Multiple Memory Systems in the Brain',
+        status: 'Landmark Discovery',
+        statusColor: 'text-teal-300',
+        iconClass: 'bg-teal-500/20 border-teal-400/50 text-teal-300',
+        body: `
+          <div class="bg-teal-500/15 border-2 border-teal-400 rounded-2xl p-6 space-y-4">
+            <div class="flex items-center gap-3 text-amber-300 font-extrabold uppercase tracking-wider text-sm">
+              <i class="fa-solid fa-award text-xl"></i> Why H.M. Changed Psychology Forever
+            </div>
+            <p class="serif-title text-2xl text-white font-bold leading-relaxed">
+              "His case demonstrated that <span class="text-teal-300 underline">different types of memory</span> depend on <span class="text-amber-300 underline">partly different brain systems</span>."
+            </p>
+          </div>
+        `
+      }
+    ];
+
+    let currentHMStage = 0;
+
+    function selectHMStage(idx) {
+      currentHMStage = idx;
+      const d = hmStages[idx];
+      setActiveClass(Array.from(document.querySelectorAll('#slideCase2 .hm-tab')), idx, 'active-tab');
+
+      byId('hmStepNum').textContent = idx + 1;
+
+      const badgeEl = byId('hmStageBadge');
+      badgeEl.className = `text-xs font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded ${d.badgeColor}`;
+      badgeEl.textContent = d.badge;
+
+      byId('hmStageTitle').textContent = d.title;
+      byId('hmStatusPill').innerHTML = `
+        <span class="text-xs text-slate-400 block">Clinical Status</span>
+        <span class="text-sm font-bold ${d.statusColor}">${d.status}</span>
+      `;
+      byId('hmBrainIcon').className = `w-16 h-16 rounded-2xl border flex items-center justify-center text-3xl brain-glow transition-all ${d.iconClass}`;
+      byId('hmStageBody').innerHTML = d.body;
+    }
+
+    /* =====================================================================
+       11. SLIDE 14 — Case study: importance vs. limitations
+       ===================================================================== */
+    function checkAllEvalRevealed() {
+      const remaining = document.querySelectorAll('#slideCase3 .eval-item:not(.revealed-item)').length;
+      if (remaining === 0) byId('finalVerdict').classList.add('unlocked-verdict');
+    }
+
+    function toggleEvalItem(el) {
+      el.classList.toggle('revealed-item');
+      checkAllEvalRevealed();
+    }
+
+    // Reveals one point per call; once all are shown it reveals the verdict,
+    // and one more call resets the board back to its starting state.
+    function revealNextEval() {
+      const hidden = document.querySelector('#slideCase3 .eval-item:not(.revealed-item)');
+      if (hidden) {
+        hidden.classList.add('revealed-item');
+        checkAllEvalRevealed();
+        return;
+      }
+
+      const verdict = byId('finalVerdict');
+      if (!verdict.classList.contains('unlocked-verdict')) {
+        verdict.classList.add('unlocked-verdict');
+      } else {
+        document.querySelectorAll('#slideCase3 .eval-item')
+          .forEach((item, i) => item.classList.toggle('revealed-item', i === 0));
+        verdict.classList.remove('unlocked-verdict');
+      }
+    }
+
+    /* =====================================================================
+       12. KEYBOARD: arrows change slides, Space steps through the current slide
+       ===================================================================== */
+    const SPACE_ACTIONS = {
+      intro:          () => selectIntroStage(nextIndex(currentIntroStage, introStages.length)),
+      neisser:        () => selectNeisserStage(nextIndex(currentNeisserStage, neisserStages.length)),
+      career:         () => selectEduStage(nextIndex(currentEduStage, eduStages.length)),
+      areas:          () => (currentAreaIndex < AREA_COUNT - 1 ? selectAreaCard(currentAreaIndex + 1) : showAllAreas()),
+      opportunities1: () => selectOpp1(nextIndex(oppState.opp1, opp1Data.length)),
+      opportunities2: () => selectOpp2(nextIndex(oppState.opp2, opp2Data.length)),
+      quiz:           slide => { const btn = slide.querySelector('button'); if (btn) toggleReveal(btn); },
+      slideCase1:     slide => {
+                        const nextLocked = slide.querySelector('.clue-card:not(.unlocked)');
+                        if (nextLocked) toggleClue(nextLocked); else unlockAllClues();
+                      },
+      slideCase2:     () => selectHMStage(nextIndex(currentHMStage, hmStages.length)),
+      slideCase3:     () => revealNextEval()
+    };
+
+    document.addEventListener('keydown', e => {
+      // Enter activates custom clickable cards (they are role="button" divs)
+      if (e.key === 'Enter' && e.target.matches && e.target.matches('div[role="button"], span[role="button"]')) {
+        e.preventDefault();
+        e.target.click();
+        return;
+      }
+
+      if (e.key === 'ArrowRight') {
+        changeSlide(1);
+      } else if (e.key === 'ArrowLeft') {
+        changeSlide(-1);
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        const slide = slides[currentIndex];
+        const type = slide.getAttribute('data-type');
+        const action = SPACE_ACTIONS[type === 'study' ? slide.id : type];
+        if (action) action(slide);
+      }
+    });
+
+    // Stops Firefox from "clicking" a focused button when Space is released
+    document.addEventListener('keyup', e => {
+      if (e.key === ' ') e.preventDefault();
+    });
+
+    /* =====================================================================
+       13. FIT THE 1280×720 STAGE TO THE WINDOW (never scales above 100%)
+       ===================================================================== */
+    function fitToScreen() {
+      const margin = 24;
+      const scale = Math.min(
+        1,
+        (window.innerWidth - margin) / appEl.offsetWidth,
+        (window.innerHeight - margin) / appEl.offsetHeight
+      );
+      appEl.style.setProperty('--fit-scale', Math.max(scale, 0.3).toFixed(4));
+    }
+
+    /* =====================================================================
+       14. START-UP
+       ===================================================================== */
+    // Make every clickable div/span reachable and operable by keyboard
+    document.querySelectorAll('[onclick]').forEach(el => {
+      if (el.tagName !== 'BUTTON' && el.tagName !== 'A') {
+        el.setAttribute('role', 'button');
+        el.setAttribute('tabindex', '0');
+      }
+    });
+
+    window.addEventListener('resize', fitToScreen);
+    window.addEventListener('load', fitToScreen);
+
+    buildDots();
+    selectIntroStage(0);
+    selectNeisserStage(0);
+    selectEduStage(0);
+    selectOpp1(0);
+    selectOpp2(0);
+    updateUI();
+    fitToScreen();
+  </script>
+</body>
+</html>
